@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout</title>
+  <script type="text/javascript" src="<%= result.prerequisiteScriptURL %>"
+    data-sdk-client-token="<%= result.prerequisiteScriptClientToken %>"></script>
+</head>
+
+<body>
+  <style>
+    /* Sample application styles for demo purposes -- not required for Fastlane */
+
+    body {
+      background-color: #faf8f5;
+      font-family: 'paypal-open', sans-serif, system-ui;
+    }
+
+    button {
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:disabled {
+      cursor: wait;
+    }
+
+    fieldset {
+      border: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin: 16px 0;
+      padding: 0;
+    }
+
+    form {
+      box-sizing: border-box;
+      margin: 0 auto;
+      padding: 32px;
+      width: min(640px, 100%);
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: normal;
+      line-height: 30px;
+      margin: 0;
+      text-align: center;
+    }
+
+    h2 {
+      color: #001435;
+      font-size: 22px;
+      font-weight: normal;
+      line-height: 28px;
+      margin: 0;
+    }
+
+    hr {
+      border: 1px solid #dbdde0;
+      width: 100%;
+    }
+
+    hr:has(+ section[hidden]) {
+      display: none;
+    }
+
+    input[type="checkbox"] {
+      margin: 8px;
+      transform: scale(1.5);
+    }
+
+    input:not([type="checkbox"]) {
+      border: 1px solid #929496;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 18px;
+      height: 48px;
+      line-height: 24px;
+      padding: 8px 12px 8px 12px;
+    }
+
+    *:has(#shipping-required-checkbox:not(:checked))~input {
+      display: none;
+    }
+
+    section {
+      margin: 32px 0;
+    }
+
+    section.active .edit-button:not(.pinned) {
+      display: none;
+    }
+
+    section.active .summary {
+      display: none;
+    }
+
+    section.pinned .edit-button:not(.pinned) {
+      display: none;
+    }
+
+    section.pinned .summary {
+      display: none;
+    }
+
+    section:not(.active, .pinned) fieldset {
+      display: none;
+    }
+
+    section:not(.active, .pinned) .submit-button {
+      display: none;
+    }
+
+    section:not(.visited) .edit-button {
+      display: none;
+    }
+
+    .edit-button {
+      background-color: initial;
+      border: 2px solid #003087;
+      box-sizing: border-box;
+      color: #003087;
+      font-size: 14px;
+      font-weight: 700;
+      gap: 6px;
+      height: 32px;
+      line-height: 20px;
+      padding: 0px 16px 0px 16px;
+    }
+
+    .email-container {
+      display: flex;
+      flex-direction: row;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .email-input-with-watermark {
+      flex: auto;
+      margin: 0;
+    }
+
+    .header {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      margin: 16px 0;
+    }
+
+    .submit-button:not([hidden]) {
+      background-color: #003087;
+      border: none;
+      color: #ffffff;
+      display: block;
+      font-size: 18px;
+      height: 48px;
+      line-height: 24px;
+      margin: 0 auto;
+      padding: 12px 32px 12px 32px;
+    }
+
+    .submit-button:disabled {
+      background-color: #dbdde0;
+    }
+
+    #payment:not(.active, .pinned)~#checkout-button {
+      display: none;
+    }
+
+    #watermark-container {
+      align-self: flex-end;
+      min-height: 24px;
+    }
+  </style>
+  <h1>Banner</h1>
+  <p>Product list</p>
+
+  <form>
+    <h1>Checkout</h1>
+
+    <section id="customer" class="active visited">
+      <div class="header">
+        <h2>Customer</h2>
+        <button id="email-edit-button" type="button" class="edit-button">Edit</button>
+      </div>
+      <div class="summary"></div>
+      <div class="email-container">
+        <fieldset class="email-input-with-watermark">
+          <input id="email-input" name="email" type="email" placeholder="Email" autocomplete="email" />
+          <div id="watermark-container"></div>
+        </fieldset>
+        <button id="email-submit-button" type="button" class="submit-button" disabled>Continue</button>
+      </div>
+    </section>
+
+    <hr />
+
+    <section id="shipping">
+      <div class="header">
+        <h2>Shipping</h2>
+        <button id="shipping-edit-button" type="button" class="edit-button">Edit</button>
+      </div>
+      <div class="summary"></div>
+      <fieldset>
+        <span>
+          <input id="shipping-required-checkbox" name="shipping-required" type="checkbox" checked />
+          <label for="shipping-required-checkbox">This purchase requires shipping</label>
+        </span>
+        <input name="given-name" placeholder="First name" autocomplete="given-name" />
+        <input name="family-name" placeholder="Last name" autocomplete="family-name" />
+        <input name="address-line1" placeholder="Street address" autocomplete="address-line1" />
+        <input name="address-line2" placeholder="Apt., ste., bldg. (optional)" autocomplete="address-line2" />
+        <input name="address-level2" placeholder="City" autocomplete="address-level2" />
+        <input name="address-level1" placeholder="State" autocomplete="address-level1" />
+        <input name="postal-code" placeholder="ZIP code" autocomplete="postal-code" />
+        <input name="country" placeholder="Country" autocomplete="country" />
+        <input name="tel-country-code" placeholder="Country calling code" autocomplete="tel-country-code" />
+        <input name="tel-national" type="tel" placeholder="Phone number" autocomplete="tel-national" />
+      </fieldset>
+      <button id="shipping-submit-button" type="button" class="submit-button">Continue</button>
+    </section>
+
+    <hr />
+
+    <section id="payment">
+      <div class="header">
+        <h2>Payment</h2>
+        <button id="payment-edit-button" type="button" class="edit-button">Edit</button>
+      </div>
+      <fieldset>
+        <div id="payment-component"></div>
+      </fieldset>
+    </section>
+
+    <div id="paypal-abc"></div>
+
+    <button id="checkout-button" type="button" class="submit-button">Checkout</button>
+  </form>
+
+  <script defer>
+    const init = async () => {
+      if (!paypal.Fastlane) {
+        throw new Error("Paypal script loaded but no Fastlane module")
+      }
+
+      paypal.Buttons({
+        
+      }).render('#paypal-abc')
+
+      const {
+          identity,
+          profile,
+          FastlanePaymentComponent,
+          FastlaneWatermarkComponent,
+          FastlaneCardComponent
+        } = await paypal.Fastlane();
+      const abc = await paypal.Fastlane()
+      debugger
+
+      // render watermark
+      const paymentComponent = await FastlanePaymentComponent();
+      // const cardComponent = await FastlaneCardComponent()
+      (
+        await FastlaneWatermarkComponent({
+          includeAdditionalInfo: true,
+        })
+      ).render('#watermark-container');
+
+      let memberAuthenticatedSuccessfully;
+      let email;
+      let shippingAddress;
+      let paymentToken;
+
+      const form = document.querySelector('form');
+      const customerSection = document.getElementById('customer');
+      const emailSubmitButton = document.getElementById('email-submit-button');
+      const shippingSection = document.getElementById('shipping');
+      const paymentSection = document.getElementById('payment');
+      const checkoutButton = document.getElementById('checkout-button');
+      let activeSection = customerSection;
+  
+      const setActiveSection = (section) => {
+        activeSection.classList.remove('active');
+        section.classList.add('active', 'visited');
+        activeSection = section;
+      };
+  
+      const getAddressSummary = ({
+        address: {
+          addressLine1,
+          addressLine2,
+          adminArea2,
+          adminArea1,
+          postalCode,
+          countryCode,
+        } = {},
+        name: { firstName, lastName, fullName } = {},
+        phoneNumber: { countryCode: telCountryCode, nationalNumber } = {},
+      }) => {
+        const isNotEmpty = (field) => !!field;
+        const summary = [
+          fullName || [firstName, lastName].filter(isNotEmpty).join(' '),
+          [addressLine1, addressLine2].filter(isNotEmpty).join(', '),
+          [
+            adminArea2,
+            [adminArea1, postalCode].filter(isNotEmpty).join(' '),
+            countryCode,
+          ]
+            .filter(isNotEmpty)
+            .join(', '),
+          [telCountryCode, nationalNumber].filter(isNotEmpty).join(''),
+        ];
+        return summary.filter(isNotEmpty).join('\n');
+      };
+  
+      const setShippingSummary = (address) => {
+        shippingSection.querySelector('.summary').innerText =
+          getAddressSummary(address);
+      };
+
+      // =====
+      emailSubmitButton.addEventListener('click', async () => {
+        // disable button until authentication succeeds or fails
+        emailSubmitButton.setAttribute('disabled', '');
+  
+        // reset form & state
+        email = form.elements['email'].value;
+        form.reset();
+        document.getElementById('email-input').value = email;
+        shippingSection.classList.remove('visited');
+        setShippingSummary({});
+        paymentSection.classList.remove('visited', 'pinned');
+  
+        memberAuthenticatedSuccessfully = undefined;
+        shippingAddress = undefined;
+        paymentToken = undefined;
+  
+        // render payment component
+        paymentComponent.render('#payment-component');
+        // cardComponent.render('#payment-component');
+  
+        try {
+          // identify and authenticate Fastlane members
+          const { customerContextId } =
+            await identity.lookupCustomerByEmail(email);
+  
+          if (customerContextId) {
+            const authResponse =
+              await identity.triggerAuthenticationFlow(customerContextId);
+            console.log('Auth response:', authResponse);
+  
+            // save profile data
+            if (authResponse?.authenticationState === 'succeeded') {
+              memberAuthenticatedSuccessfully = true;
+              shippingAddress = authResponse.profileData.shippingAddress;
+              paymentToken = authResponse.profileData.card;
+            }
+          } else {
+            // user was not recognized
+            console.log('No customerContextId');
+          }
+  
+          // update form UI
+          customerSection.querySelector('.summary').innerText = email;
+          if (shippingAddress) {
+            setShippingSummary(shippingAddress);
+          }
+          if (memberAuthenticatedSuccessfully) {
+            shippingSection.classList.add('visited');
+            paymentSection.classList.add('pinned');
+            setActiveSection(paymentSection);
+          } else {
+            setActiveSection(shippingSection);
+          }
+        } finally {
+          // re-enable button once authentication succeeds or fails
+          emailSubmitButton.removeAttribute('disabled');
+        }
+      });
+
+      emailSubmitButton.removeAttribute('disabled');
+
+      document
+        .getElementById('email-edit-button')
+        .addEventListener('click', () => setActiveSection(customerSection));
+  
+      document
+        .getElementById('shipping-submit-button')
+        .addEventListener('click', () => {
+          // extract form values
+          const firstName = form.elements['given-name'].value;
+          const lastName = form.elements['family-name'].value;
+          const addressLine1 = form.elements['address-line1'].value;
+          const addressLine2 = form.elements['address-line2'].value;
+          const adminArea2 = form.elements['address-level2'].value;
+          const adminArea1 = form.elements['address-level1'].value;
+          const postalCode = form.elements['postal-code'].value;
+          const countryCode = form.elements['country'].value;
+          const telCountryCode = form.elements['tel-country-code'].value;
+          const telNational = form.elements['tel-national'].value;
+  
+          // update state & form UI
+          shippingAddress = {
+            address: {
+              addressLine1,
+              addressLine2,
+              adminArea2,
+              adminArea1,
+              postalCode,
+              countryCode,
+            },
+            name: {
+              firstName,
+              lastName,
+              fullName: [firstName, lastName]
+                .filter((field) => !!field)
+                .join(' '),
+            },
+            phoneNumber: {
+              countryCode: telCountryCode,
+              nationalNumber: telNational,
+            },
+          };
+          setShippingSummary(shippingAddress);
+          paymentComponent.setShippingAddress(shippingAddress);
+          setActiveSection(paymentSection);
+        });
+  
+      document
+        .getElementById('shipping-edit-button')
+        .addEventListener('click', async () => {
+          if (memberAuthenticatedSuccessfully) {
+            // open Shipping Address Selector for Fastlane members
+            const { selectionChanged, selectedAddress } =
+              await profile.showShippingAddressSelector();
+  
+            if (selectionChanged) {
+              // selectedAddress contains the new address
+              console.log('New address:', selectedAddress);
+  
+              // update state & form UI
+              shippingAddress = selectedAddress;
+              setShippingSummary(shippingAddress);
+              paymentComponent.setShippingAddress(shippingAddress);
+            } else {
+              // selection modal was dismissed without selection
+            }
+          } else {
+            setActiveSection(shippingSection);
+          }
+        });
+  
+      document
+        .getElementById('payment-edit-button')
+        .addEventListener('click', () => setActiveSection(paymentSection));
+  
+      checkoutButton.addEventListener('click', async () => {
+        // disable button until transaction succeeds or fails
+        checkoutButton.setAttribute('disabled', '');
+  
+        try {
+          // get payment token
+          paymentToken = await paymentComponent.getPaymentToken();
+          console.log('Payment token:', paymentToken);
+  
+          // send transaction details to back-end
+          const headers = new Headers();
+          headers.append('Content-Type', 'application/json');
+          const isShippingRequired = form.elements['shipping-required'].checked;
+          const body = JSON.stringify({
+            ...(isShippingRequired && { shippingAddress }),
+            paymentToken,
+          });
+          const response = await fetch('transaction', {
+            method: 'POST',
+            headers,
+            body,
+          });
+          const { result, error } = await response.json();
+  
+          if (error) {
+            console.error(error);
+          } else {
+            if (result.id) {
+              const message = `Order ${result.id}: ${result.status}`;
+              console.log(message);
+              alert(message);
+            } else {
+              console.error(result);
+            }
+          }
+        } finally {
+          // re-enable button once transaction succeeds or fails
+          checkoutButton.removeAttribute('disabled');
+        }
+      });
+    }
+    init()
+  </script>
+</body>
+
+</html>

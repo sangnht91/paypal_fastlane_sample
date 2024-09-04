@@ -201,7 +201,7 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
       countryCode: shippingAddress?.address?.countryCode,
       countryName: 'United States of America',
       zipCode: shippingAddress?.address?.postalCode,
-      phoneNumber: shippingAddress?.phoneNumber?.nationalNumber.replace(-,),
+      phoneNumber: shippingAddress?.phoneNumber?.nationalNumber.replace('-', ''),
       isVerified: '',
       suggestion: ''
     },
@@ -217,7 +217,7 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
       countryCode: shippingAddress?.address?.countryCode,
       countryName: 'United States of America',
       zipCode: shippingAddress?.address?.postalCode,
-      phoneNumber: shippingAddress?.phoneNumber?.nationalNumber.replace(-,),
+      phoneNumber: shippingAddress?.phoneNumber?.nationalNumber.replace('-', ''),
       isVerified: '',
       suggestion: ''
     },

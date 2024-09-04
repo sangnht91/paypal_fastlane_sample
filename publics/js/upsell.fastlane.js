@@ -111,15 +111,12 @@ const CheckoutFastLane = async () => {
       .call(FastlaneElements.arrElmFastlaneSB)
       .forEach(async (item, index) => {
         const elementWatermark = `
-        <div class="fastlane-shipping-address-${index}" style="margin-top: 10px; width: 100%; display: flex; justify-content: space-between;">
+        <div class="fastlane-shipping-address-${index}" style="display: none; margin-top: 10px; width: 100%; display: flex; justify-content: space-between;">
           <div class="summary"></div>
           <button class="fastlane-edit-shipping-address-${index}" style="background: transparent; border: 0;">Edit</button>
         </div>
         <div class="fastlane-payment-info-${index}" style="width: 100%; margin-top: 10px"></div>
         <div class="watermark-container-${index}" style="margin: 0px 0px 0px auto;"></div>`;
-        // const elementWatermark = `
-        //   <div class="watermark-container-${index}" style="margin: 0px 0px 0px auto;"></div>
-        //   <div class="fastlane-payment-info-${index}" style="margin-top: 10px"></div>`
         item.insertAdjacentHTML("beforebegin", elementWatermark);
 
         const waterMark = await FastlaneWatermarkComponent();
@@ -263,26 +260,24 @@ const CheckoutFastLane = async () => {
                   upsell_productindex
                 ].productPrices?.DiscountedPrice?.Value || 0,
             };
-            console.log(payload)
-            ctrwowUtils.hideGlobalLoading()
-            // headers.append("Content-Type", "application/json");
-            // const requestOptions = {
-            //   headers: headers,
-            //   method: "POST",
-            //   body: JSON.stringify(payload),
-            // };
-            // fetch(URL, requestOptions)
-            //   .then((result) => result.json())
-            //   .then((rs) => {
-            //     debugger;
-            //     // handle next step
-            //     if (rs.data.status.toString() === "COMPLETED") {
-            //       window.location = "confirm.html";
-            //     } else {
-            //       window.location = "decline.html";
-            //     }
-            //   })
-            //   .catch((err) => console.log(err));
+            headers.append("Content-Type", "application/json");
+            const requestOptions = {
+              headers: headers,
+              method: "POST",
+              body: JSON.stringify(payload),
+            };
+            fetch(URL, requestOptions)
+              .then((result) => result.json())
+              .then((rs) => {
+                debugger;
+                // handle next step
+                if (rs.data.status.toString() === "COMPLETED") {
+                  window.location = "confirm.html";
+                } else {
+                  window.location = "decline.html";
+                }
+              })
+              .catch((err) => console.log(err));
           });
         });
   };

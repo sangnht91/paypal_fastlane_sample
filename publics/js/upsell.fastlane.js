@@ -195,11 +195,11 @@ const CheckoutFastLane = async () => {
           editShippingAddress();
           placeUpsellOrder(paymentToken);
         } else {
-          // window.location = "decline.html"
+          window.location = "decline.html"
         }
       }
     } else {
-      // window.location = "decline.html"
+      window.location = "decline.html"
     }
   };
 

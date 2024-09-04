@@ -22,7 +22,7 @@ PPCP_Api.get('/client-token', async (request: Request, response: Response) => {
     URL_ENCODE.append("grant_type", "client_credentials");
     URL_ENCODE.append("response_type", "client_token");
     URL_ENCODE.append("intent", "sdk_init");
-    // URL_ENCODE.append("domains[]", "example.com,example2.com");
+    URL_ENCODE.append("domains[]", "storage.googleapis.com");
 
     const result: {
       data: any,

@@ -9,7 +9,7 @@ import Web from './routers/Web/Web'
 
 dotenv.config()
 const app = express()
-app.use(cors())
+app.use(cors({ origin: '*'}))
 app.use(express.static('publics'))
 // app.engine('html', engines.mustache)
 app.set('view engine', 'ejs') // view engine: ejs or html

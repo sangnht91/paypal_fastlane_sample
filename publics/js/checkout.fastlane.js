@@ -258,7 +258,9 @@ const CheckoutFastLane = async () => {
       const payload = {
         paymentToken: _paymentToken,
         shippingAddress: _shippingAddress,
-        price: ctrwowCheckout?.checkoutData?.getProduct()?.productPrices?.DiscountedPrice?.Value || 0
+        price: ctrwowCheckout?.checkoutData?.getProduct()?.productPrices?.DiscountedPrice?.Value || 0,
+        checkout: true,
+        refId: ""
       }
       const requestOptions = {
         headers: headers,
@@ -271,7 +273,7 @@ const CheckoutFastLane = async () => {
           // handle next step
           localStorage.setItem("payment-method", "fastlane")
           if (rs.data.status.toString() === 'COMPLETED') {
-            localStorage.setItem("refId", rs.data.id)
+            localStorage.setItem("refId", rs.data.refId)
             window.location = "special-offer-fastlane.html"
           } else {
             window.location = "decline.html"

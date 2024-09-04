@@ -93,7 +93,7 @@ PPCP_Api.get('/access-token', async (request: Request, response: Response) => {
 })
 
 PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Response) => {
-  const { paymentToken, price, shippingAddress, refId } = req.body;
+  const { paymentToken, price, shippingAddress, checkout, refId } = req.body;
 
   const url = 'https://api-m.sandbox.paypal.com/v2/checkout/orders'
   const headers = {
@@ -249,7 +249,7 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
   .then(rs => {
     res.status(result.status).json({
       success: true,
-      data: result.data,
+      data: {...result.data, refId: checkout ? rsCreate._id : refId},
       message: null
     })
   })

@@ -269,4 +269,24 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
   // })
 })
 
+PPCP_Api.get('/relatedorders/:orderNumber', (request: Request, response: Response) => {
+  try {
+    const orderNumber: string = request.params.orderNumber
+    const mainOrder: any = Fastlane.findById(orderNumber)
+    const upsells: any = Fastlane.find({ refId: orderNumber })
+
+    const result = {
+      ...mainOrder.siteData,
+      relatedOrders: upsells.forEach((item: any) => item.siteData)
+    }
+    response.status(200).json(result)
+  } catch(e) {
+    response.status(500).json({
+      success: false,
+      data: e,
+      message: null
+    })
+  }
+  
+})
 export default PPCP_Api

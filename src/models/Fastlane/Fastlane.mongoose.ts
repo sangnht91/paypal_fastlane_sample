@@ -13,6 +13,9 @@ const FastlaneSchema = new Schema({
   fastlaneData: {
     type: Object
   },
+  refId: {
+    type: String
+  },
   apiData: {
     type: Object
   },

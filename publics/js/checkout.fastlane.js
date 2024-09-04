@@ -271,6 +271,7 @@ const CheckoutFastLane = async () => {
           // handle next step
           localStorage.setItem("payment-method", "fastlane")
           if (rs.data.status.toString() === 'COMPLETED') {
+            localStorage.setItem("refId", rs.refId)
             window.location = "special-offer-fastlane.html"
           } else {
             window.location = "decline.html"

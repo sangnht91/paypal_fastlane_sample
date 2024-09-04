@@ -3,6 +3,7 @@ import { date, InferType, object, string } from "yup"
 const Yup_Fastlane = object({
   _id: string(),
   fastlaneData: object(),
+  refId: string(),
   apiData: object(),
   siteData: object(),
   cratedAt: date(),

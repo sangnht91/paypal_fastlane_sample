@@ -93,7 +93,7 @@ PPCP_Api.get('/access-token', async (request: Request, response: Response) => {
 })
 
 PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Response) => {
-  const { paymentToken, price, shippingAddress } = req.body;
+  const { paymentToken, price, shippingAddress, refId } = req.body;
 
   const url = 'https://api-m.sandbox.paypal.com/v2/checkout/orders'
   const headers = {
@@ -137,6 +137,7 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
   }
   const rsCreate = await Fastlane.Create({
     fastlaneData: req.body,
+    refId: refId || null,
     apiData: {
       requestData: {
         url,
@@ -151,6 +152,7 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
   const result = await axios.post(url, payload, { headers });
   rsCreate._id && await Fastlane.Update(rsCreate._id, {
     fastlaneData: req.body,
+    refId: refId || null,
     apiData: {
       requestData: {
         url,
@@ -161,12 +163,12 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
     },
     siteData: {
       "id": 21144891,
-      "orderNumber": "2421144891",
+      "orderNumber": Date.now().toString(),
       "orderStatus": "Paid",
       "languageCode": "EN",
       "currencyCode": "USD",
       "currencySign": "US$",
-      orderPrice: price,
+      "orderPrice": price,
       "orderPriceFormatted": `$${price}`,
       "orderPriceUSD": price,
       "orderPriceFormattedUSD": `${price}`,

@@ -259,6 +259,7 @@ const CheckoutFastLane = async () => {
                 ctrwowUpsell?.productListData?.getProductList()?.prices[
                   upsell_productindex
                 ].productPrices?.DiscountedPrice?.Value || 0,
+              refId: localStorage.getItem("refId")
             };
             headers.append("Content-Type", "application/json");
             const requestOptions = {

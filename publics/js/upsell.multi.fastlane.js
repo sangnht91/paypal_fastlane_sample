@@ -66,7 +66,7 @@ const CheckoutFastLane = async () => {
     }
   };
 
-  const verfifytEmail = async () => {
+  const verifyEmail = async () => {
     const email = localStorage.getItem("customer_email");
     const fastlaneInfo = localStorage.getItem("fastlane")
       ? JSON.parse(localStorage.getItem("fastlane"))

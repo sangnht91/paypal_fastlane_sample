@@ -14,7 +14,7 @@ app.use(express.static('publics'))
 // app.engine('html', engines.mustache)
 app.set('view engine', 'ejs') // view engine: ejs or html
 app.set('views', './src/views')
-const PORT = process.env.PORT || 3005
+const PORT = process.env.PORT || 3000
 
 app.use('/api/v1', ApiV1)
 app.use('/', Web)

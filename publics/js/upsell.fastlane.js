@@ -188,7 +188,8 @@ const CheckoutFastLane = async () => {
             authResponse.profileData;
           _shippingAddress = shippingAddress;
           renderPaymentInfo();
-          renderShippingAddress(shippingAddress);
+          // renderShippingAddress(shippingAddress);
+          profile.setShippingAddress(shippingAddress)
           editShippingAddress();
           placeUpsellOrder(paymentToken);
         } else {

@@ -103,7 +103,6 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
   }
   const payload = {
     "intent": "CAPTURE",
-    // "intent": "AUTHORIZE",
     "payment_source": {
       "card": {
         "single_use_token": paymentToken.id
@@ -116,25 +115,6 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
           "currency_code": "USD",
           "value": price
         },
-        // "items": [
-        //     {
-        //       "name": "Coffee",
-        //       "description": "1 lb Kona Island Beans",
-        //       "sku": "sku03",
-        //       "unit_amount": {
-        //         "currency_code": "USD",
-        //         "value": price
-        //       },
-        //       "quantity": "1",
-        //       "category": "PHYSICAL_GOODS",
-        //       "image_url": "https://example.com/static/images/items/1/kona_coffee_beans.jpg",
-        //       "url": "https://example.com/items/1/kona_coffee_beans",
-        //       "upc": {
-        //         "type": "UPC-A",
-        //         "code": "987654321015"
-        //       }
-        //     }
-        //   ],
         "shipping": {
           "type": "SHIPPING",
           "name": {
@@ -157,23 +137,112 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
   }
   const rsCreate = await Fastlane.Create({
     fastlaneData: req.body,
-    requestData: {
-      url,
-      headers,
-      payload
+    apiData: {
+      requestData: {
+        url,
+        headers,
+        payload
+      },
+      responseData: {}
     },
-    responseData: {}
+    siteData: {}
   })
 
   const result = await axios.post(url, payload, { headers });
   rsCreate._id && await Fastlane.Update(rsCreate._id, {
     fastlaneData: req.body,
-    requestData: {
-      url,
-      headers,
-      payload
+    apiData: {
+      requestData: {
+        url,
+        headers,
+        payload
+      },
+      responseData: result.data
     },
-    responseData: result.data
+    siteData: {
+      "id": 21144891,
+      "orderNumber": "2421144891",
+      "orderStatus": "Paid",
+      "languageCode": "EN",
+      "currencyCode": "USD",
+      "currencySign": "US$",
+      orderPrice: price,
+      "orderPriceFormatted": `$${price}`,
+      "orderPriceUSD": price,
+      "orderPriceFormattedUSD": `${price}`,
+      "orderProductPrice": price,
+      "orderProductPriceFormatted": `${price}`,
+      "orderProductPriceUSD": price,
+      "orderProductPriceFormattedUSD": `${price}`,
+      "shippingPrice": 0,
+      "shippingPriceFormatted": "$0",
+      "shippingPriceUSD": 0,
+      "shippingPriceFormattedUSD": "$0",
+      "ip": "193.19.109.60",
+      "productName": "Dr Goodrow Mini Home Garden",
+      "productDescription": null,
+      "orderType": "Regular Order",
+      "campaignName": "Dr Goodrow Mini EN UP (GetMhamo 49 UP)",
+      "createDate": "2024-09-04T03:43:12.183",
+      "createDateOffset": "2024-09-04T03:43:13.0159043Z",
+      "sku": "30615_3",
+      "customerEmail": "sangnht3005@yahoo.com",
+      "firstName": shippingAddress?.name?.firstName,
+      "middleName": null,
+      "lastName": shippingAddress?.name?.lastName,
+      "addressId": 10974605,
+      "orderBehaviorId": 2,
+      "orderBehaviorName": "Test Order",
+      "shippingAddress": {
+          "id": 10974605,
+          "firstName": shippingAddress?.name?.firstName,
+          "middleName": null,
+          "lastName": shippingAddress?.name?.lastName,
+          "address1": shippingAddress?.address?.addressLine1,
+          "address2": shippingAddress?.address?.addressLine2,
+          "city": shippingAddress?.address?.adminArea2,
+          "state": shippingAddress?.address?.adminArea1,
+          "countryCode": shippingAddress?.address?.countryCode,
+          "countryName": "United States of America",
+          "zipCode": shippingAddress?.address?.postalCode,
+          "phoneNumber": shippingAddress?.phoneNumber?.nationalNumber.replace("-", ""),
+          "isVerified": null,
+          "suggestion": null
+      },
+      "billingAddress": {
+          "id": 10974605,
+          "firstName": shippingAddress?.name?.firstName,
+          "middleName": null,
+          "lastName": shippingAddress?.name?.lastName,
+          "address1": shippingAddress?.address?.addressLine1,
+          "address2": shippingAddress?.address?.addressLine2,
+          "city": shippingAddress?.address?.adminArea2,
+          "state": shippingAddress?.address?.adminArea1,
+          "countryCode": shippingAddress?.address?.countryCode,
+          "countryName": "United States of America",
+          "zipCode": shippingAddress?.address?.postalCode,
+          "phoneNumber": shippingAddress?.phoneNumber?.nationalNumber.replace("-", ""),
+          "isVerified": null,
+          "suggestion": null
+      },
+      "receipts": [
+          {
+              "transactionId": "D2030B14-3EF7-4D0B-928C-6B697DAAF70E",
+              "paymentStatus": "Paid",
+              "paymentDescription": "Product",
+              "paymentNumber": "2421144891",
+              "currencyCode": "USD",
+              "amount": price,
+              "formattedAmount": `$${price}`,
+              "midDescriptor": "TestDescriptor",
+              "receiptDate": "2024-09-04T03:43:12.8",
+              "Id": 24337975
+          }
+      ],
+      "orderTaxes": null,
+      "productImageUrls": null,
+      "relatedOrders": []
+    }
   })
   .then(rs => {
     res.status(result.status).json({

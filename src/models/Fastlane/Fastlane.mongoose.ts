@@ -13,10 +13,10 @@ const FastlaneSchema = new Schema({
   fastlaneData: {
     type: Object
   },
-  requestData: {
+  apiData: {
     type: Object
   },
-  responseData: {
+  siteData: {
     type: Object
   }
 }, 

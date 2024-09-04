@@ -236,10 +236,8 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
     productImageUrls: '',
     relatedOrders: []
   }
-
-  console.log(transaction)
   const resTransaction = await Transaction.Create(transaction)
-  console.log(resTransaction)
+  
   // save log
   const resFastlane = rsCreate._id && await Fastlane.Update(rsCreate._id, {
     fastlaneData: req.body,

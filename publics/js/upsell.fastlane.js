@@ -92,9 +92,9 @@ const CheckoutFastLane = async () => {
         .filter(isNotEmpty)
         .join(", "),
       [telCountryCode, nationalNumber].filter(isNotEmpty).join(""),
-    ];
-    return summary.filter(isNotEmpty).join("\n");
-  };
+    ]
+    return summary.filter(isNotEmpty).join("\n")
+  }
 
   const renderShippingAddress = (address) => {
     Array.prototype.slice
@@ -102,9 +102,9 @@ const CheckoutFastLane = async () => {
       .forEach(async (item, index) => {
         document.querySelector(
           `.fastlane-shipping-address-${index} .summary`
-        ).innerText = getAddressSummary(address);
-      });
-  };
+        ).innerText = getAddressSummary(address)
+      })
+  }
 
   const renderWatermark = () => {
     Array.prototype.slice
@@ -115,13 +115,12 @@ const CheckoutFastLane = async () => {
           <div class="summary"></div>
           <button class="fastlane-edit-shipping-address-${index}" style="background: transparent; border: 0;">Edit</button>
         </div>
-        <div class="fastlane-payment-info-${index}" style="width: 100%; margin-top: 10px"></div>
-        <div class="watermark-container-${index}" style="margin: 0px 0px 0px auto;"></div>`;
-        item.insertAdjacentHTML("beforebegin", elementWatermark);
+        <div class="fastlane-payment-info-${index}" style="width: 100%; margin-top: 10px"></div>`
+        item.insertAdjacentHTML("beforebegin", elementWatermark)
 
-        const waterMark = await FastlaneWatermarkComponent();
-        waterMark.render(`.watermark-container-${index}`);
-      });
+        const waterMark = await FastlaneWatermarkComponent()
+        waterMark.render(`.watermark-container-${index}`)
+      })
   };
 
   const editShippingAddress = () => {
@@ -189,7 +188,7 @@ const CheckoutFastLane = async () => {
           _shippingAddress = shippingAddress;
           renderPaymentInfo();
           // renderShippingAddress(shippingAddress);
-          profile.setShippingAddress(shippingAddress)
+          paymentComponent.setShippingAddress(shippingAddress)
           editShippingAddress();
           placeUpsellOrder(paymentToken);
         } else {

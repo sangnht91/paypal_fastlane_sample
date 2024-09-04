@@ -4,9 +4,8 @@ import * as utils from "./../../common/utils/helpers"
 import axios from "axios"
 import { getAccessToken } from "../../common/utils/paypal_helpers"
 import Fastlane from "../../models/Fastlane/Fastlane.mongoose"
-import { isValidObjectId, Types } from "mongoose"
-import Transaction from "../../models/Transaction/Transaction.mongoose"
 import { ITransaction } from "../../models/Transaction/Transaction.yup"
+import Transactions from "../../models/Transaction/Transaction.mongoose"
 
 const PPCP_Api = express.Router()
 PPCP_Api.use(bodyParser.json())
@@ -236,7 +235,7 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
     productImageUrls: '',
     relatedOrders: []
   }
-  const resTransaction = await Transaction.Create(transaction)
+  const resTransaction = await Transactions.Create(transaction)
   
   // save log
   const resFastlane = rsCreate._id && await Fastlane.Update(rsCreate._id, {
@@ -281,14 +280,28 @@ PPCP_Api.get('/relatedorders/:orderNumber', async (request: Request, response: R
       })
     }
 
-    const mainOrder = await Transaction.Get(orderNumber)
-    const upsells = await Transaction.find({ refOrderNumber: orderNumber })
+    // const mainOrder = await Transaction.Get(orderNumber)
+    // const upsells = await Transaction.GetRefTransaction(orderNumber)
 
-    const result = {
-      ...mainOrder,
-      relatedOrders: [...upsells]
-    }
-    response.status(200).json(result)
+    // const result = {
+    //   ...mainOrder,
+    //   relatedOrders: [...upsells]
+    // }
+    Transactions.Get(orderNumber)
+      .then((rs: any) => {
+        response.status(200).json({
+          ...rs.main,
+          relatedorder: [...rs.upsells]
+        })
+      })
+      .catch(e => {
+        response.status(500).json({
+          success: false,
+          data: e,
+          message: null
+        })
+      })
+    
   } catch (e) {
     response.status(500).json({
       success: false,

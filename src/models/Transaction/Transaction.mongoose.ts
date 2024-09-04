@@ -6,7 +6,7 @@ interface ITransactionModel extends Model<ITransactionDocument> {
   GetAll: () => Promise<ITransactionDocument>,
   Get: (orderNumber: string) => Promise<ITransactionDocument>,
   Create: (transaction: ITransaction) => Promise<ITransactionDocument>,
-  Update: (id: String, transaction: ITransaction) => Promise<ITransactionDocument>,
+  // Update: (id: String, transaction: ITransaction) => Promise<ITransactionDocument>,
 }
 
 const Schema = mongoose.Schema
@@ -253,8 +253,12 @@ const TransactionsSchema = new Schema(
 TransactionsSchema.statics.GetAll = () => {
   return Transactions.find()
 }
-TransactionsSchema.statics.Get = (orderNumber) => {
-  return Transactions.findOne({ orderNumber })
+
+TransactionsSchema.statics.Get = async(orderNumber: string) => {
+  const main = await Transactions.findOne({ orderNumber: orderNumber })
+  const upsells = await Transactions.find({ refOrderNumber: orderNumber})
+
+  return {main, upsells}
 }
 
 TransactionsSchema.statics.Create = (payload: ITransaction) => {
@@ -262,9 +266,9 @@ TransactionsSchema.statics.Create = (payload: ITransaction) => {
   return transaction.save()
 }
 
-TransactionsSchema.statics.Update = (orderNumber: String, payload: ITransaction) => {
-  return Transactions.findOneAndUpdate({ orderNumber }, payload, { new: true })
-}
+// TransactionsSchema.statics.Update = (orderNumber: String, payload: ITransaction) => {
+//   return Transactions.findOneAndUpdate({ orderNumber }, payload, { new: true })
+// }
 
 const Transactions = mongoose.model<ITransactionDocument, ITransactionModel>(
   "Transactions",

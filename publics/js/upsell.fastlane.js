@@ -1,3 +1,12 @@
+const link = {
+  getParams: (param) => {
+    const _url = new URL(window.location.href)
+    const queryString  = _url.search
+    const urlParams = new URLSearchParams(queryString)
+    return urlParams.get(param) || null
+  }
+}
+
 const PaypalSdk = {
   getClientId: () => {
     return "ARdFH6JLgvNUCjpOfDFu37UI8IOzJtomuRB8otTYITxF56AuNfHYGb3uX1fvpqNneZjcSVjzTq1rYpWY";
@@ -13,7 +22,7 @@ const PaypalSdk = {
     return URL_SDK.toString();
   },
   getClientToken: async () => {
-    const URL = "https://paypal-fastlane-sample.onrender.com/api/v1/ppcp/client-token";
+    const URL = `${link.getParams("isTest") === 1 ? 'http://localhost:3000' : 'https://paypal-fastlane-sample.onrender.com'}/api/v1/ppcp/client-token`
     const result = await fetch(URL).then((res) => res.json());
     return result.data || "";
   },
@@ -250,7 +259,7 @@ const CheckoutFastLane = async () => {
           item.addEventListener("click", async (e) => {
             e.preventDefault();
             ctrwowUtils.showGlobalLoading();
-            const URL = "https://paypal-fastlane-sample.onrender.com/api/v1/ppcp/create-order";
+            const URL = `${link.getParams("isTest") === 1 ? 'http://localhost:3000' : 'https://paypal-fastlane-sample.onrender.com'}/api/v1/ppcp/create-order`
             const headers = new Headers();
             const payload = {
               paymentToken: await paymentComponent.getPaymentToken(),

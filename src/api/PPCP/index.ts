@@ -236,9 +236,10 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
     productImageUrls: '',
     relatedOrders: []
   }
+  const resTransaction = await Transaction.Create(transaction)
 
   // save log
-  rsCreate._id && await Fastlane.Update(rsCreate._id, {
+  const resFastlane = rsCreate._id && await Fastlane.Update(rsCreate._id, {
     fastlaneData: req.body,
     refId: refId || null,
     apiData: {
@@ -251,19 +252,20 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
     },
     siteData: {}
   })
-    
-  
-  Transaction.Create(transaction)
-    .then(rs => {
-      res.status(result.status).json(rs)
+
+  if (resFastlane && resTransaction) {
+    res.status(result.status).json({
+      success: true,
+      data: resFastlane,
+      message: null
     })
-    .catch((err: Error) => {
-      res.status(500).json({
-        success: false,
-        data: null,
-        message: err
-      })
+  } else {
+    res.status(500).json({
+      success: false,
+      data: null,
+      message: null
     })
+  }
 })
 
 PPCP_Api.get('/relatedorders/:orderNumber', async (request: Request, response: Response) => {

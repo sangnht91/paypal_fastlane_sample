@@ -158,85 +158,84 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
   const orderNumber = Date.now().toString()
 
   // defined transaction
-  const transaction: ITransaction = {
-    refOrderNumber: checkout ? '' : refId,
-    orderNumber: orderNumber,
-    orderStatus: 'Paid',
-    languageCode: 'EN',
-    currencyCode: 'USD',
-    currencySign: 'US$',
-    orderPrice: `${price}`,
-    orderPriceFormatted: `$${price}`,
-    orderPriceUSD: `${price}`,
-    orderPriceFormattedUSD: `${price}`,
-    orderProductPrice: `${price}`,
-    orderProductPriceFormatted: `${price}`,
-    orderProductPriceUSD: `${price}`,
-    orderProductPriceFormattedUSD: `${price}`,
-    shippingPrice: '0',
-    shippingPriceFormatted: '$0',
-    shippingPriceUSD: '0',
-    shippingPriceFormattedUSD: '$0',
-    ip: '193.19.109.60',
-    productName: 'Dr Goodrow Mini Home Garden',
-    productDescription: '',
-    orderType: 'Regular Order',
-    campaignName: 'Dr Goodrow Mini EN UP (GetMhamo 49 UP)',
-    sku: '30615_3',
-    customerEmail: 'sangnht3005@yahoo.com',
-    firstName: shippingAddress?.name?.firstName,
-    middleName: '',
-    lastName: shippingAddress?.name?.lastName,
-    addressId: '10974605',
-    orderBehaviorId: '2',
-    orderBehaviorName: 'Test Order',
-    shippingAddress: {
-      firstName: shippingAddress?.name?.firstName,
-      middleName: '',
-      lastName: shippingAddress?.name?.lastName,
-      address1: shippingAddress?.address?.addressLine1,
-      address2: shippingAddress?.address?.addressLine2,
-      city: shippingAddress?.address?.adminArea2,
-      state: shippingAddress?.address?.adminArea1,
-      countryCode: shippingAddress?.address?.countryCode,
-      countryName: 'United States of America',
-      zipCode: shippingAddress?.address?.postalCode,
-      phoneNumber: shippingAddress?.phoneNumber?.nationalNumber.replace('-', ''),
-      isVerified: '',
-      suggestion: ''
-    },
-    billingAddress: {
-      id: '10974605',
-      firstName: shippingAddress?.name?.firstName,
-      middleName: '',
-      lastName: shippingAddress?.name?.lastName,
-      address1: shippingAddress?.address?.addressLine1,
-      address2: shippingAddress?.address?.addressLine2,
-      city: shippingAddress?.address?.adminArea2,
-      state: shippingAddress?.address?.adminArea1,
-      countryCode: shippingAddress?.address?.countryCode,
-      countryName: 'United States of America',
-      zipCode: shippingAddress?.address?.postalCode,
-      phoneNumber: shippingAddress?.phoneNumber?.nationalNumber.replace('-', ''),
-      isVerified: '',
-      suggestion: ''
-    },
-    receipts: [
-      {
-        transactionId: 'D2030B14-3EF7-4D0B-928C-6B697DAAF70E',
-        paymentStatus: 'Paid',
-        paymentDescription: 'Product',
-        paymentNumber: '2421144891',
-        currencyCode: 'USD',
-        amount: `${price}`,
-        formattedAmount: `$${price}`,
-        midDescriptor: 'TestDescriptor'
-      }
-    ],
-    orderTaxes: '',
-    productImageUrls: '',
-    relatedOrders: []
-  }
+  // const transaction: ITransaction = {
+  //   refOrderNumber: checkout ? '' : refId.toString(),
+  //   orderNumber: `${orderNumber}`,
+  //   orderStatus: 'Paid',
+  //   languageCode: 'EN',
+  //   currencyCode: 'USD',
+  //   currencySign: 'US$',
+  //   orderPrice: `${price}`,
+  //   orderPriceFormatted: `$${price}`,
+  //   orderPriceUSD: `${price}`,
+  //   orderPriceFormattedUSD: `${price}`,
+  //   orderProductPrice: `${price}`,
+  //   orderProductPriceFormatted: `${price}`,
+  //   orderProductPriceUSD: `${price}`,
+  //   orderProductPriceFormattedUSD: `${price}`,
+  //   shippingPrice: '0',
+  //   shippingPriceFormatted: '$0',
+  //   shippingPriceUSD: '0',
+  //   shippingPriceFormattedUSD: '$0',
+  //   ip: '193.19.109.60',
+  //   productName: 'Dr Goodrow Mini Home Garden',
+  //   productDescription: '',
+  //   orderType: 'Regular Order',
+  //   campaignName: 'Dr Goodrow Mini EN UP (GetMhamo 49 UP)',
+  //   sku: '30615_3',
+  //   customerEmail: 'sangnht3005@yahoo.com',
+  //   firstName: shippingAddress?.name?.firstName,
+  //   middleName: '',
+  //   lastName: shippingAddress?.name?.lastName,
+  //   addressId: '10974605',
+  //   orderBehaviorId: '2',
+  //   orderBehaviorName: 'Test Order',
+  //   shippingAddress: {
+  //     firstName: shippingAddress?.name?.firstName,
+  //     middleName: '',
+  //     lastName: shippingAddress?.name?.lastName,
+  //     address1: shippingAddress?.address?.addressLine1,
+  //     address2: shippingAddress?.address?.addressLine2,
+  //     city: shippingAddress?.address?.adminArea2,
+  //     state: shippingAddress?.address?.adminArea1,
+  //     countryCode: shippingAddress?.address?.countryCode,
+  //     countryName: 'United States of America',
+  //     zipCode: shippingAddress?.address?.postalCode,
+  //     phoneNumber: shippingAddress?.phoneNumber?.nationalNumber.replace('-', ''),
+  //     isVerified: '',
+  //     suggestion: ''
+  //   },
+  //   billingAddress: {
+  //     firstName: shippingAddress?.name?.firstName,
+  //     middleName: '',
+  //     lastName: shippingAddress?.name?.lastName,
+  //     address1: shippingAddress?.address?.addressLine1,
+  //     address2: shippingAddress?.address?.addressLine2,
+  //     city: shippingAddress?.address?.adminArea2,
+  //     state: shippingAddress?.address?.adminArea1,
+  //     countryCode: shippingAddress?.address?.countryCode,
+  //     countryName: 'United States of America',
+  //     zipCode: shippingAddress?.address?.postalCode,
+  //     phoneNumber: shippingAddress?.phoneNumber?.nationalNumber.replace('-', ''),
+  //     isVerified: '',
+  //     suggestion: ''
+  //   },
+  //   receipts: [
+  //     {
+  //       transactionId: 'D2030B14-3EF7-4D0B-928C-6B697DAAF70E',
+  //       paymentStatus: 'Paid',
+  //       paymentDescription: 'Product',
+  //       paymentNumber: '2421144891',
+  //       currencyCode: 'USD',
+  //       amount: `${price}`,
+  //       formattedAmount: `$${price}`,
+  //       midDescriptor: 'TestDescriptor'
+  //     }
+  //   ],
+  //   orderTaxes: '',
+  //   productImageUrls: '',
+  //   relatedOrders: []
+  // }
 
   // save log
   rsCreate._id && await Fastlane.Update(rsCreate._id, {
@@ -250,21 +249,21 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
       },
       responseData: result.data
     },
-    siteData: transaction
+    siteData: {}
   })
     
   
-  Transaction.Create(transaction)
-    .then(rs => {
-      res.status(result.status).json(rs)
-    })
-    .catch((err: Error) => {
-      res.status(500).json({
-        success: false,
-        data: null,
-        message: err
-      })
-    })
+  // Transaction.Create(transaction)
+  //   .then(rs => {
+  //     res.status(result.status).json(rs)
+  //   })
+  //   .catch((err: Error) => {
+  //     res.status(500).json({
+  //       success: false,
+  //       data: null,
+  //       message: err
+  //     })
+  //   })
 })
 
 PPCP_Api.get('/relatedorders/:orderNumber', async (request: Request, response: Response) => {

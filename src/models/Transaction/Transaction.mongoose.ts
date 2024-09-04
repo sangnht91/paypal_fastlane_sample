@@ -10,264 +10,265 @@ interface ITransactionModel extends Model<ITransactionDocument> {
 }
 
 const Schema = mongoose.Schema
-const TransactionSchema = new Schema({
-  refOrderNumber: {
-    type: String()
-  },
-  orderNumber: {
-    type: String()
-  },
-  orderStatus: {
-    type: String()
-  },
-  languageCode: {
-    type: String()
-  },
-  currencyCode: {
-    type: String()
-  },
-  currencySign: {
-    type: String()
-  },
-  orderPrice: {
-    type: String()
-  },
-  orderPriceFormatted: {
-    type: String()
-  },
-  orderPriceUSD: {
-    type: String()
-  },
-  orderPriceFormattedUSD: {
-    type: String()
-  },
-  orderProductPrice: {
-    type: String()
-  },
-  orderProductPriceFormatted: {
-    type: String()
-  },
-  orderProductPriceUSD: {
-    type: String()
-  },
-  orderProductPriceFormattedUSD: {
-    type: String()
-  },
-  shippingPrice: {
-    type: String()
-  },
-  shippingPriceFormatted: {
-    type: String()
-  },
-  shippingPriceUSD: {
-    type: String()
-  },
-  shippingPriceFormattedUSD: {
-    type: String()
-  },
-  ip: {
-    type: String()
-  },
-  productName: {
-    type: String()
-  },
-  productDescription: {
-    type: String()
-  },
-  orderType: {
-    type: String()
-  },
-  campaignName: {
-    type: String()
-  },
-  sku: {
-    type: String()
-  },
-  customerEmail: {
-    type: String()
-  },
-  firstName: {
-    type: String()
-  },
-  middleName: {
-    type: String()
-  },
-  lastName: {
-    type: String()
-  },
-  addressId: {
-    type: String()
-  },
-  orderBehaviorId: {
-    type: String()
-  },
-  orderBehaviorName: {
-    type: String()
-  },
-  shippingAddress: {
-    type: Object(
-      {
-        shippingId: {
-          type: String()
-        },
-        firstName: {
-          type: String()
-        },
-        middleName: {
-          type: String()
-        },
-        lastName: {
-          type: String()
-        },
-        address1: {
-          type: String()
-        },
-        address2: {
-          type: String()
-        },
-        city: {
-          type: String()
-        },
-        state: {
-          type: String()
-        },
-        countryCode: {
-          type: String()
-        },
-        countryName: {
-          type: String()
-        },
-        zipCode: {
-          type: String()
-        },
-        phoneNumber: {
-          type: String()
-        },
-        isVerified: {
-          type: String()
-        },
-        suggestion: {
-          type: String()
-        }
-      }
-    )
-  },
-  billingAddress: {
-    type: Object({
-      id: {
-        type: String()
-      },
-      firstName: {
-        type: String()
-      },
-      middleName: {
-        type: String()
-      },
-      lastName: {
-        type: String()
-      },
-      address1: {
-        type: String()
-      },
-      address2: {
-        type: String()
-      },
-      city: {
-        type: String()
-      },
-      state: {
-        type: String()
-      },
-      countryCode: {
-        type: String()
-      },
-      countryName: {
-        type: String()
-      },
-      zipCode: {
-        type: String()
-      },
-      phoneNumber: {
-        type: String()
-      },
-      isVerified: {
-        type: String()
-      },
-      suggestion: {
-        type: String()
-      }
-    })
-  },
-  receipts: {
-    type: Array(
-      Object(
+const TransactionsSchema = new Schema(
+  {
+    refOrderNumber: {
+      type: String
+    },
+    orderNumber: {
+      type: String
+    },
+    orderStatus: {
+      type: String
+    },
+    languageCode: {
+      type: String
+    },
+    currencyCode: {
+      type: String
+    },
+    currencySign: {
+      type: String
+    },
+    orderPrice: {
+      type: String
+    },
+    orderPriceFormatted: {
+      type: String
+    },
+    orderPriceUSD: {
+      type: String
+    },
+    orderPriceFormattedUSD: {
+      type: String
+    },
+    orderProductPrice: {
+      type: String
+    },
+    orderProductPriceFormatted: {
+      type: String
+    },
+    orderProductPriceUSD: {
+      type: String
+    },
+    orderProductPriceFormattedUSD: {
+      type: String
+    },
+    shippingPrice: {
+      type: String
+    },
+    shippingPriceFormatted: {
+      type: String
+    },
+    shippingPriceUSD: {
+      type: String
+    },
+    shippingPriceFormattedUSD: {
+      type: String
+    },
+    ip: {
+      type: String
+    },
+    productName: {
+      type: String
+    },
+    productDescription: {
+      type: String
+    },
+    orderType: {
+      type: String
+    },
+    campaignName: {
+      type: String
+    },
+    sku: {
+      type: String
+    },
+    customerEmail: {
+      type: String
+    },
+    firstName: {
+      type: String
+    },
+    middleName: {
+      type: String
+    },
+    lastName: {
+      type: String
+    },
+    addressId: {
+      type: String
+    },
+    orderBehaviorId: {
+      type: String
+    },
+    orderBehaviorName: {
+      type: String
+    },
+    shippingAddress: {
+      type: Object(
         {
-          transactionId: {
-            type: String()
+          shippingId: {
+            type: String
           },
-          paymentStatus: {
-            type: String()
+          firstName: {
+            type: String
           },
-          paymentDescription: {
-            type: String()
+          middleName: {
+            type: String
           },
-          paymentNumber: {
-            type: String()
+          lastName: {
+            type: String
           },
-          currencyCode: {
-            type: String()
+          address1: {
+            type: String
           },
-          amount: {
-            type: String()
+          address2: {
+            type: String
           },
-          formattedAmount: {
-            type: String()
+          city: {
+            type: String
           },
-          midDescriptor: {
-            type: String()
+          state: {
+            type: String
           },
-          receiptDate: {
-            type: String()
+          countryCode: {
+            type: String
           },
-          Id: {
-            type: String()
+          countryName: {
+            type: String
+          },
+          zipCode: {
+            type: String
+          },
+          phoneNumber: {
+            type: String
+          },
+          isVerified: {
+            type: String
+          },
+          suggestion: {
+            type: String
           }
         }
       )
-    )
+    },
+    billingAddress: {
+      type: Object({
+        id: {
+          type: String
+        },
+        firstName: {
+          type: String
+        },
+        middleName: {
+          type: String
+        },
+        lastName: {
+          type: String
+        },
+        address1: {
+          type: String
+        },
+        address2: {
+          type: String
+        },
+        city: {
+          type: String
+        },
+        state: {
+          type: String
+        },
+        countryCode: {
+          type: String
+        },
+        countryName: {
+          type: String
+        },
+        zipCode: {
+          type: String
+        },
+        phoneNumber: {
+          type: String
+        },
+        isVerified: {
+          type: String
+        },
+        suggestion: {
+          type: String
+        }
+      })
+    },
+    receipts: {
+      type: Array(
+        Object(
+          {
+            transactionId: {
+              type: String
+            },
+            paymentStatus: {
+              type: String
+            },
+            paymentDescription: {
+              type: String
+            },
+            paymentNumber: {
+              type: String
+            },
+            currencyCode: {
+              type: String
+            },
+            amount: {
+              type: String
+            },
+            formattedAmount: {
+              type: String
+            },
+            midDescriptor: {
+              type: String
+            },
+            receiptDate: {
+              type: String
+            },
+            Id: {
+              type: String
+            }
+          }
+        )
+      )
+    },
+    orderTaxes: {
+      type: String
+    },
+    productImageUrls: {
+      type: String
+    },
+    relatedOrders: {
+      type: Array()
+    }
   },
-  orderTaxes: {
-    type: String()
-  },
-  productImageUrls: {
-    type: String()
-  },
-  relatedOrders: {
-    type: Array()
-  }
-},
   { timestamps: true }
 )
 
-TransactionSchema.statics.GetAll = () => {
-  return Transaction.find()
+TransactionsSchema.statics.GetAll = () => {
+  return Transactions.find()
 }
-TransactionSchema.statics.Get = (orderNumber) => {
-  return Transaction.findOne({ orderNumber })
+TransactionsSchema.statics.Get = (orderNumber) => {
+  return Transactions.findOne({ orderNumber })
 }
 
-TransactionSchema.statics.Create = async (payload: ITransaction) => {
-  const transaction = new Transaction(payload)
+TransactionsSchema.statics.Create = (payload: ITransaction) => {
+  const transaction = new Transactions(payload)
   return transaction.save()
 }
 
-TransactionSchema.statics.Update = async (orderNumber: String, payload: ITransaction) => {
-  return Transaction.findOneAndUpdate({ orderNumber }, payload, { new: true })
+TransactionsSchema.statics.Update = (orderNumber: String, payload: ITransaction) => {
+  return Transactions.findOneAndUpdate({ orderNumber }, payload, { new: true })
 }
 
-const Transaction = mongoose.model<ITransactionDocument, ITransactionModel>(
+const Transactions = mongoose.model<ITransactionDocument, ITransactionModel>(
   "Transactions",
-  TransactionSchema
+  TransactionsSchema
 )
-export default Transaction
+export default Transactions
 

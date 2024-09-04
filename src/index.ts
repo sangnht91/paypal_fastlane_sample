@@ -1,7 +1,6 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
-import engines from 'consolidate'
 import ApiV1 from './routers/API/ApiV1'
 import { mongoose_connection } from './common/config/mongoose.connection'
 import * as utils from './common/utils/helpers'

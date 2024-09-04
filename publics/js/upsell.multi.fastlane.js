@@ -62,7 +62,7 @@ const CheckoutFastLane = async () => {
   const init = () => {
     const paymentMethod = localStorage.getItem("payment-method")
     if (paymentMethod === "fastlane") {
-      verfifytEmail()
+      verifyEmail()
     }
   };
 

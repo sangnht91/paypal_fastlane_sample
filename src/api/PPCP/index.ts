@@ -4,6 +4,9 @@ import * as utils from "./../../common/utils/helpers"
 import axios from "axios"
 import { getAccessToken } from "../../common/utils/paypal_helpers"
 import Fastlane from "../../models/Fastlane/Fastlane.mongoose"
+import { isValidObjectId, Types } from "mongoose"
+import Transaction from "../../models/Transaction/Transaction.mongoose"
+import { ITransaction } from "../../models/Transaction/Transaction.yup"
 
 const PPCP_Api = express.Router()
 PPCP_Api.use(bodyParser.json())
@@ -43,7 +46,7 @@ PPCP_Api.get('/client-token', async (request: Request, response: Response) => {
         message: result.message
       })
     }
-  } catch(e) {
+  } catch (e) {
     response.status(400).json({
       success: false,
       data: null,
@@ -131,10 +134,12 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
             "country_code": shippingAddress?.phoneNumber?.countryCode,
             "national_number": shippingAddress?.phoneNumber?.nationalNumber.replace("-", "")
           }
-        } 
+        }
       }
     ]
   }
+
+  // save log
   const rsCreate = await Fastlane.Create({
     fastlaneData: req.body,
     refId: refId || null,
@@ -150,6 +155,90 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
   })
 
   const result = await axios.post(url, payload, { headers });
+  const orderNumber = Date.now().toString()
+
+  // defined transaction
+  const transaction: ITransaction = {
+    refOrderNumber: checkout ? '' : refId,
+    orderNumber: orderNumber,
+    orderStatus: 'Paid',
+    languageCode: 'EN',
+    currencyCode: 'USD',
+    currencySign: 'US$',
+    orderPrice: price,
+    orderPriceFormatted: `$${price}`,
+    orderPriceUSD: price,
+    orderPriceFormattedUSD: `${price}`,
+    orderProductPrice: price,
+    orderProductPriceFormatted: `${price}`,
+    orderProductPriceUSD: price,
+    orderProductPriceFormattedUSD: `${price}`,
+    shippingPrice: '0',
+    shippingPriceFormatted: '$0',
+    shippingPriceUSD: '0',
+    shippingPriceFormattedUSD: '$0',
+    ip: '193.19.109.60',
+    productName: 'Dr Goodrow Mini Home Garden',
+    productDescription: '',
+    orderType: 'Regular Order',
+    campaignName: 'Dr Goodrow Mini EN UP (GetMhamo 49 UP)',
+    sku: '30615_3',
+    customerEmail: 'sangnht3005@yahoo.com',
+    firstName: shippingAddress?.name?.firstName,
+    middleName: '',
+    lastName: shippingAddress?.name?.lastName,
+    addressId: '10974605',
+    orderBehaviorId: '2',
+    orderBehaviorName: 'Test Order',
+    shippingAddress: {
+      firstName: shippingAddress?.name?.firstName,
+      middleName: '',
+      lastName: shippingAddress?.name?.lastName,
+      address1: shippingAddress?.address?.addressLine1,
+      address2: shippingAddress?.address?.addressLine2,
+      city: shippingAddress?.address?.adminArea2,
+      state: shippingAddress?.address?.adminArea1,
+      countryCode: shippingAddress?.address?.countryCode,
+      countryName: 'United States of America',
+      zipCode: shippingAddress?.address?.postalCode,
+      phoneNumber: shippingAddress?.phoneNumber?.nationalNumber.replace(-,),
+      isVerified: '',
+      suggestion: ''
+    },
+    billingAddress: {
+      id: '10974605',
+      firstName: shippingAddress?.name?.firstName,
+      middleName: '',
+      lastName: shippingAddress?.name?.lastName,
+      address1: shippingAddress?.address?.addressLine1,
+      address2: shippingAddress?.address?.addressLine2,
+      city: shippingAddress?.address?.adminArea2,
+      state: shippingAddress?.address?.adminArea1,
+      countryCode: shippingAddress?.address?.countryCode,
+      countryName: 'United States of America',
+      zipCode: shippingAddress?.address?.postalCode,
+      phoneNumber: shippingAddress?.phoneNumber?.nationalNumber.replace(-,),
+      isVerified: '',
+      suggestion: ''
+    },
+    receipts: [
+      {
+        transactionId: 'D2030B14-3EF7-4D0B-928C-6B697DAAF70E',
+        paymentStatus: 'Paid',
+        paymentDescription: 'Product',
+        paymentNumber: '2421144891',
+        currencyCode: 'USD',
+        amount: price,
+        formattedAmount: `$${price}`,
+        midDescriptor: 'TestDescriptor'
+      }
+    ],
+    orderTaxes: '',
+    productImageUrls: '',
+    relatedOrders: []
+  }
+
+  // save log
   rsCreate._id && await Fastlane.Update(rsCreate._id, {
     fastlaneData: req.body,
     refId: refId || null,
@@ -161,132 +250,51 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
       },
       responseData: result.data
     },
-    siteData: {
-      "id": 21144891,
-      "orderNumber": Date.now().toString(),
-      "orderStatus": "Paid",
-      "languageCode": "EN",
-      "currencyCode": "USD",
-      "currencySign": "US$",
-      "orderPrice": price,
-      "orderPriceFormatted": `$${price}`,
-      "orderPriceUSD": price,
-      "orderPriceFormattedUSD": `${price}`,
-      "orderProductPrice": price,
-      "orderProductPriceFormatted": `${price}`,
-      "orderProductPriceUSD": price,
-      "orderProductPriceFormattedUSD": `${price}`,
-      "shippingPrice": 0,
-      "shippingPriceFormatted": "$0",
-      "shippingPriceUSD": 0,
-      "shippingPriceFormattedUSD": "$0",
-      "ip": "193.19.109.60",
-      "productName": "Dr Goodrow Mini Home Garden",
-      "productDescription": null,
-      "orderType": "Regular Order",
-      "campaignName": "Dr Goodrow Mini EN UP (GetMhamo 49 UP)",
-      "createDate": "2024-09-04T03:43:12.183",
-      "createDateOffset": "2024-09-04T03:43:13.0159043Z",
-      "sku": "30615_3",
-      "customerEmail": "sangnht3005@yahoo.com",
-      "firstName": shippingAddress?.name?.firstName,
-      "middleName": null,
-      "lastName": shippingAddress?.name?.lastName,
-      "addressId": 10974605,
-      "orderBehaviorId": 2,
-      "orderBehaviorName": "Test Order",
-      "shippingAddress": {
-          "id": 10974605,
-          "firstName": shippingAddress?.name?.firstName,
-          "middleName": null,
-          "lastName": shippingAddress?.name?.lastName,
-          "address1": shippingAddress?.address?.addressLine1,
-          "address2": shippingAddress?.address?.addressLine2,
-          "city": shippingAddress?.address?.adminArea2,
-          "state": shippingAddress?.address?.adminArea1,
-          "countryCode": shippingAddress?.address?.countryCode,
-          "countryName": "United States of America",
-          "zipCode": shippingAddress?.address?.postalCode,
-          "phoneNumber": shippingAddress?.phoneNumber?.nationalNumber.replace("-", ""),
-          "isVerified": null,
-          "suggestion": null
-      },
-      "billingAddress": {
-          "id": 10974605,
-          "firstName": shippingAddress?.name?.firstName,
-          "middleName": null,
-          "lastName": shippingAddress?.name?.lastName,
-          "address1": shippingAddress?.address?.addressLine1,
-          "address2": shippingAddress?.address?.addressLine2,
-          "city": shippingAddress?.address?.adminArea2,
-          "state": shippingAddress?.address?.adminArea1,
-          "countryCode": shippingAddress?.address?.countryCode,
-          "countryName": "United States of America",
-          "zipCode": shippingAddress?.address?.postalCode,
-          "phoneNumber": shippingAddress?.phoneNumber?.nationalNumber.replace("-", ""),
-          "isVerified": null,
-          "suggestion": null
-      },
-      "receipts": [
-          {
-              "transactionId": "D2030B14-3EF7-4D0B-928C-6B697DAAF70E",
-              "paymentStatus": "Paid",
-              "paymentDescription": "Product",
-              "paymentNumber": "2421144891",
-              "currencyCode": "USD",
-              "amount": price,
-              "formattedAmount": `$${price}`,
-              "midDescriptor": "TestDescriptor",
-              "receiptDate": "2024-09-04T03:43:12.8",
-              "Id": 24337975
-          }
-      ],
-      "orderTaxes": null,
-      "productImageUrls": null,
-      "relatedOrders": []
-    }
+    siteData: transaction
   })
-  .then(rs => {
-    res.status(result.status).json({
-      success: true,
-      data: {...result.data, refId: checkout ? rsCreate._id : refId},
-      message: null
+    
+  
+  Transaction.Create(transaction)
+    .then(rs => {
+      res.status(result.status).json(rs)
     })
-  })
-  .catch((err: Error) => {
-    res.status(500).json({
-      success: false,
-      data: err,
-      message: err.message
+    .catch((err: Error) => {
+      res.status(500).json({
+        success: false,
+        data: null,
+        message: err
+      })
     })
-  })
-
-  // res.status(result.status).json({
-  //   success: true,
-  //   data: result.data,
-  //   payload,
-  //   message: null
-  // })
 })
 
-PPCP_Api.get('/relatedorders/:orderNumber', (request: Request, response: Response) => {
+PPCP_Api.get('/relatedorders/:orderNumber', async (request: Request, response: Response) => {
   try {
     const orderNumber: string = request.params.orderNumber
-    const mainOrder: any = Fastlane.findById(orderNumber)
-    const upsells: any = Fastlane.find({ refId: orderNumber })
+
+    // orderNumber is null or empty
+    if (!orderNumber && orderNumber === '') {
+      response.status(500).json({
+        success: false,
+        data: null,
+        message: null
+      })
+    }
+
+    const mainOrder = await Transaction.Get(orderNumber)
+    const upsells = await Transaction.find({ refOrderNumber: orderNumber })
 
     const result = {
-      ...mainOrder.siteData,
-      relatedOrders: upsells.forEach((item: any) => item.siteData)
+      ...mainOrder,
+      relatedOrders: [...upsells]
     }
     response.status(200).json(result)
-  } catch(e) {
+  } catch (e) {
     response.status(500).json({
       success: false,
       data: e,
       message: null
     })
   }
-  
+
 })
 export default PPCP_Api

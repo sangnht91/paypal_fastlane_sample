@@ -256,7 +256,7 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
   if (resFastlane && resTransaction) {
     res.status(result.status).json({
       success: true,
-      data: result.data,
+      data: {...result.data, refOrderNumber: resTransaction.orderNumber},
       message: null
     })
   } else {

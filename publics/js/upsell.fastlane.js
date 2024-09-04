@@ -111,7 +111,7 @@ const CheckoutFastLane = async () => {
       .call(FastlaneElements.arrElmFastlaneSB)
       .forEach(async (item, index) => {
         const elementWatermark = `
-        <div class="fastlane-shipping-address-${index}" style="display: none; margin-top: 10px; width: 100%; display: flex; justify-content: space-between;">
+        <div class="fastlane-shipping-address-${index}" style="display: none !important; margin-top: 10px; width: 100%; display: flex; justify-content: space-between;">
           <div class="summary"></div>
           <button class="fastlane-edit-shipping-address-${index}" style="background: transparent; border: 0;">Edit</button>
         </div>

@@ -62,7 +62,7 @@ const CheckoutFastLane = async () => {
   const init = () => {
     const paymentMethod = localStorage.getItem("payment-method")
     if (paymentMethod === "fastlane") {
-      verifyEmail()
+      placeUpsellOrder()
     }
   };
 
@@ -97,7 +97,6 @@ const CheckoutFastLane = async () => {
             authResponse.profileData
           _shippingAddress = shippingAddress
           renderPaymentInfo()
-          placeUpsellOrder()
         } else {
           window.location = "decline.html"
         }

@@ -5,6 +5,7 @@ import ApiV1 from './routers/API/ApiV1'
 import { mongoose_connection } from './common/config/mongoose.connection'
 import * as utils from './common/utils/helpers'
 import Web from './routers/Web/Web'
+import ApiOrder from './routers/API/ApiOrder'
 
 dotenv.config()
 const app = express()
@@ -16,6 +17,7 @@ app.set('views', './src/views')
 const PORT = process.env.PORT || 3000
 
 app.use('/api/v1', ApiV1)
+app.use('/', ApiOrder)
 app.use('/', Web)
 
 mongoose_connection({ connectionString: utils.getMongoConnectionString(), dbName: utils.getMongoDatabaseName()}, () => {

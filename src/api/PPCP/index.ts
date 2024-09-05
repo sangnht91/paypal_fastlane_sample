@@ -312,4 +312,49 @@ PPCP_Api.get('/relatedorders/:orderNumber', async (request: Request, response: R
   }
 
 })
+
+PPCP_Api.get('/:orderNumber/relatedorders', async (request: Request, response: Response) => {
+  try {
+    const orderNumber: string = request.params.orderNumber
+
+    // orderNumber is null or empty
+    if (!orderNumber && orderNumber === '') {
+      response.status(500).json({
+        success: false,
+        data: null,
+        message: null
+      })
+    }
+
+    // const mainOrder = await Transaction.Get(orderNumber)
+    // const upsells = await Transaction.GetRefTransaction(orderNumber)
+
+    // const result = {
+    //   ...mainOrder,
+    //   relatedOrders: [...upsells]
+    // }
+    Transactions.Get(orderNumber)
+      .then((rs: any) => {
+        response.status(200).json({
+          ...rs.main,
+          relatedorder: rs.upsells
+        })
+      })
+      .catch(e => {
+        response.status(500).json({
+          success: false,
+          data: e,
+          message: null
+        })
+      })
+    
+  } catch (e) {
+    response.status(500).json({
+      success: false,
+      data: e,
+      message: null
+    })
+  }
+
+})
 export default PPCP_Api

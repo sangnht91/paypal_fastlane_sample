@@ -95,7 +95,7 @@ PPCP_Api.get('/access-token', async (request: Request, response: Response) => {
 })
 
 PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Response) => {
-  const { paymentToken, price, shippingAddress, checkout, refId } = req.body;
+  const { paymentToken, price, shippingAddress, checkout, refId, email } = req.body;
 
   const url = 'https://api-m.sandbox.paypal.com/v2/checkout/orders'
   const headers = {
@@ -182,7 +182,7 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
     orderType: 'Regular Order',
     campaignName: 'Dr Goodrow Mini EN UP (GetMhamo 49 UP)',
     sku: '30615_3',
-    customerEmail: 'sangnht3005@yahoo.com',
+    customerEmail: email,
     firstName: shippingAddress?.name?.firstName,
     middleName: '',
     lastName: shippingAddress?.name?.lastName,

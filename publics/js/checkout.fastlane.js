@@ -270,7 +270,8 @@ const CheckoutFastLane = async () => {
         shippingAddress: _shippingAddress,
         price: ctrwowCheckout?.checkoutData?.getProduct()?.productPrices?.DiscountedPrice?.Value || 0,
         checkout: true,
-        refId: ""
+        refId: "",
+        email: FastlaneElements.elmInputEmail.value
       }
       const requestOptions = {
         headers: headers,

@@ -233,6 +233,7 @@ const CheckoutFastLane = async () => {
             const payload = {
               paymentToken: await paymentComponent.getPaymentToken(),
               shippingAddress: _shippingAddress,
+              email: localStorage.getItem("customer_email"),
               price:
                 ctrwowUpsell?.productListData?.getProductList()?.prices[
                   upsell_productindex

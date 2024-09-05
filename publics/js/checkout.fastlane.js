@@ -282,8 +282,60 @@ const CheckoutFastLane = async () => {
           // handle next step
           localStorage.setItem("payment-method", "fastlane")
           if (rs.data.status.toString() === 'COMPLETED') {
-            localStorage.setItem("refId", rs.data.refOrderNumber)
-            window.location = "special-offer-fastlane.html"
+            localStorage.setItem("refId", rs.data.orderInfo.orderNumber)
+            const { orderInfo } = rs.data
+            const __orderInfo = {
+              "orderParams": "",
+              "upsells": [
+                  {
+                      "id": 0,
+                      "linkedCampaignName": "(WIDGET) (MULTI-BANK) Trifi Booster EN UP (MyRangeXTD 49 EN)",
+                      "linkedCampaignId": 9333,
+                      "upsellUrl": "https://www.myrangextd.com/en/upsell-1-multi-bank.html",
+                      "index": 0
+                  },
+                  {
+                      "id": 0,
+                      "linkedCampaignName": "(WIDGET) (MULTI-BANK) Mini Delayed EN UP (MyRangeXTD 49 EN)",
+                      "linkedCampaignId": 9332,
+                      "upsellUrl": "https://www.myrangextd.com/en/upsell-2-multi-bank.html",
+                      "index": 1
+                  }
+              ],
+              "upsellIndex": 0,
+              "campaignName": "(WIDGET) (MULTI-BANK) MyRangeXTD EN (AOV 49) (TrifiBoostUpg)",
+              "campaignWebKey": "D3F04E92-A406-4DE6-BF43-12E1651F61DE",
+              "orderNumber": orderInfo.orderNumber,
+              "cusEmail": orderInfo.customerEmail,
+              "cardId": "f74785ec-006d-49a3-96c4-f5e352082ad8",
+              "paymentProcessorId": 0,
+              "addressId": 10974605,
+              "customerId": 13259646,
+              "orderTotal": orderInfo.orderPriceUSD,
+              "formattedNumber": orderInfo.orderPriceFormatted,
+              "orderTotalFull": orderInfo.orderPriceUSD,
+              "totalPriceMiniUpsell": 0,
+              "savedTotal": 0,
+              "quantity": 1,
+              "orderedProducts": [
+                  {
+                      "sku": "30251_4a",
+                      "pid": 2190,
+                      "name": "RangeXTD Router 4"
+                  }
+              ],
+              "useCreditCard": true,
+              "activationCode": [],
+              "cusPhone": orderInfo.shippingAddress.phoneNumber,
+              "cusFirstName": orderInfo.firstName,
+              "cusLastName": orderInfo.lastName,
+              "cusCity": orderInfo.shippingAddress.city,
+              "cusState": orderInfo.shippingAddress.state,
+              "cusCountry": orderInfo.shippingAddress.countryCode,
+              "cusZip": orderInfo.shippingAddress.zipCode
+            }
+            localStorage.setItem("orderInfo", __orderInfo)
+            window.location = "upsell-1-multi-bank.html"
           } else {
             window.location = "decline.html"
           }

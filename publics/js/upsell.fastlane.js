@@ -119,13 +119,16 @@ const CheckoutFastLane = async () => {
     Array.prototype.slice
       .call(FastlaneElements.arrElmFastlaneSB)
       .forEach(async (item, index) => {
+        // disabled upsell submit button
+        item.setAttribute("disabled", true)
+
         const elementWatermark = `
         <div class="fastlane-shipping-address-${index}" style="display: none !important; margin-top: 10px; width: 100%; display: flex; justify-content: space-between;">
           <div class="summary"></div>
           <button class="fastlane-edit-shipping-address-${index}" style="background: transparent; border: 0;">Edit</button>
         </div>
         <div class="fastlane-payment-info-${index}" style="width: 100%; margin-top: 10px"></div>`
-        item.insertAdjacentHTML("beforebegin", elementWatermark)
+        item.insertAdjacentHTML("afterend", elementWatermark)
 
         const waterMark = await FastlaneWatermarkComponent()
         waterMark.render(`.watermark-container-${index}`)
@@ -190,15 +193,14 @@ const CheckoutFastLane = async () => {
           }
         )
 
-        console.log(authResponse)
         if (authResponse?.authenticationState === "succeeded") {
           const { shippingAddress, card: paymentToken } =
             authResponse.profileData;
           _shippingAddress = shippingAddress;
           renderPaymentInfo();
           // renderShippingAddress(shippingAddress);
+          // editShippingAddress();
           paymentComponent.setShippingAddress(shippingAddress)
-          editShippingAddress();
           placeUpsellOrder(paymentToken);
         } else {
           window.location = "decline.html"
@@ -213,6 +215,7 @@ const CheckoutFastLane = async () => {
     Array.prototype.slice
       .call(FastlaneElements.arrElmFastlaneSB)
       .forEach(async (item, index) => {
+        item.setAttribute("disabled", false)
         paymentComponent.render(`.fastlane-payment-info-${index}`);
       });
   };

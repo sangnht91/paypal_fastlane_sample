@@ -128,13 +128,14 @@ const CheckoutFastLane = async () => {
 
             bindShippingAddress(_shippingAddress)
             editShippingAddress()
-            handleCreditCard(false)
-            handleCheckoutWithCreditCard()
           }
         } else {
           console.log('No customerContextId')
           ctrwowUtils.hideGlobalLoading()
         }
+
+        handleCreditCard(false)
+        handleCheckoutWithCreditCard()
         renderPaymentInfo()
         placeOrder()
       } else {

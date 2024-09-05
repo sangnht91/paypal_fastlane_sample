@@ -347,6 +347,8 @@ const CheckoutFastLane = async () => {
               "cusZip": orderInfo.shippingAddress.zipCode
             }
             localStorage.setItem("orderInfo", JSON.stringify(__orderInfo))
+            localStorage.setItem("user_firstname", orderInfo.firstName)
+            localStorage.setItem("user_lastname", orderInfo.lastName)
             window.location = "upsell-1-multi-bank.html"
           } else {
             window.location = "decline.html"

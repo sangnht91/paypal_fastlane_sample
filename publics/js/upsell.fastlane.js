@@ -280,10 +280,73 @@ const CheckoutFastLane = async () => {
             fetch(URL, requestOptions)
               .then((result) => result.json())
               .then((rs) => {
-                debugger;
                 // handle next step
                 if (rs.data.status.toString() === "COMPLETED") {
-                  window.location = "confirm.html";
+                  const { orderInfo } = rs
+                  const __orderInfo = {
+                    "orderParams": "",
+                    "upsells": [
+                        {
+                            "id": 0,
+                            "linkedCampaignName": "(WIDGET) (MULTI-BANK) Mini Delayed EN UP (MyRangeXTD 49 EN)",
+                            "linkedCampaignId": 9332,
+                            "upsellUrl": "https://www.myrangextd.com/en/upsell-2-multi-bank.html",
+                            "index": 1
+                        }
+                    ],
+                    "upsellUrls": [
+                      {
+                        "index": 1,
+                        "price": 24.99,
+                        "campaignWebKey": "8D9D0A8F-157E-4A8B-9FB4-51FB84F8C30F",
+                        "campaignName": "(WIDGET) (MULTI-BANK) Mini Delayed EN UP (MyRangeXTD 49 EN)",
+                        "orderNumber": "2421145985",
+                        "customerId": 13259646,
+                        "url": "https://storage.googleapis.com/ctrwowteststorage/sangnht/upsell-1-multi-bank.html?ctr_tracking__click_id=76fd5961-bf65-4ccd-bc51-eb4ff8697681&ctr_tracking__original_click_id=76fd5961-bf65-4ccd-bc51-eb4ff8697681&ctr_cssid=a10f8195a4de4967888e49f2a5a442cb&ctr_ppid=66d7a30015f06510c8b1d998&ctr_psid=5fa22d1e835ba6183c5abb39&ctr_ppu=https%3A%2F%2Fstorage.googleapis.com%2Fctrwowteststorage%2Fsangnht%2Forder-pp-fastlane.html&ctr_io=2&clickid=btncancel",
+                        "orderedProducts": [
+                            {
+                                "sku": "30251",
+                                "pid": 1322,
+                                "name": "RangeXTD Router",
+                                "quantity": 1
+                            }
+                        ]
+                      }
+                    ],
+                    "upsellIndex": 1,
+                    "campaignName": "(WIDGET) (MULTI-BANK) MyRangeXTD EN (AOV 49) (TrifiBoostUpg)",
+                    "campaignWebKey": "D3F04E92-A406-4DE6-BF43-12E1651F61DE",
+                    "orderNumber": orderInfo.orderNumber,
+                    "cusEmail": orderInfo.customerEmail,
+                    "cardId": "f74785ec-006d-49a3-96c4-f5e352082ad8",
+                    "paymentProcessorId": 0,
+                    "addressId": 10974605,
+                    "customerId": 13259646,
+                    "orderTotal": orderInfo.orderPriceUSD,
+                    "formattedNumber": orderInfo.orderPriceFormatted,
+                    "orderTotalFull": orderInfo.orderPriceUSD,
+                    "totalPriceMiniUpsell": 0,
+                    "savedTotal": 0,
+                    "quantity": 1,
+                    "orderedProducts": [
+                        {
+                            "sku": "30251_4a",
+                            "pid": 2190,
+                            "name": "RangeXTD Router 4"
+                        }
+                    ],
+                    "useCreditCard": true,
+                    "activationCode": [],
+                    "cusPhone": orderInfo.shippingAddress.phoneNumber,
+                    "cusFirstName": orderInfo.firstName,
+                    "cusLastName": orderInfo.lastName,
+                    "cusCity": orderInfo.shippingAddress.city,
+                    "cusState": orderInfo.shippingAddress.state,
+                    "cusCountry": orderInfo.shippingAddress.countryCode,
+                    "cusZip": orderInfo.shippingAddress.zipCode
+                  }
+                  localStorage.setItem("orderInfo", JSON.stringify(__orderInfo))
+                  window.location = "confirm-fastlane.html";
                 } else {
                   window.location = "decline.html";
                 }

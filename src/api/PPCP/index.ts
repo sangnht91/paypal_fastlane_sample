@@ -335,8 +335,17 @@ PPCP_Api.get('/:orderNumber/relatedorders', async (request: Request, response: R
     // }
     Transactions.Get(orderNumber)
       .then((rs: any) => {
+        // const totalPrice = rs.upsell.reduce((item: any, total: number) => item.orderPrice + total, rs.main.orderPrice)
         response.status(200).json({
           ...rs.main,
+          // orderPrice: totalPrice,
+          // orderPriceFormatted: `$${totalPrice}`,
+          // orderPriceUSD: `${totalPrice}`,
+          // orderPriceFormattedUSD: `${totalPrice}`,
+          // orderProductPrice: `${totalPrice}`,
+          // orderProductPriceFormatted: `${totalPrice}`,
+          // orderProductPriceUSD: `${totalPrice}`,
+          // orderProductPriceFormattedUSD: `${totalPrice}`,
           relatedorder: rs.upsells
         })
       })

@@ -251,12 +251,12 @@ const TransactionsSchema = new Schema(
 )
 
 TransactionsSchema.statics.GetAll = () => {
-  return Transactions.find()
+  return Transactions.find().lean()
 }
 
 TransactionsSchema.statics.Get = async(orderNumber: string) => {
-  const main = await Transactions.findOne({ orderNumber: orderNumber })
-  const upsells = await Transactions.find({ refOrderNumber: orderNumber})
+  const main = await Transactions.findOne({ orderNumber: orderNumber }).lean()
+  const upsells = await Transactions.find({ refOrderNumber: orderNumber}).lean()
 
   return {main, upsells}
 }

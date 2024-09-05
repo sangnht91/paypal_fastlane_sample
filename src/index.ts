@@ -17,7 +17,7 @@ app.set('views', './src/views')
 const PORT = process.env.PORT || 3000
 
 app.use('/api/v1', ApiV1)
-app.use('/', ApiOrder)
+app.use('/orders', ApiOrder)
 app.use('/', Web)
 
 mongoose_connection({ connectionString: utils.getMongoConnectionString(), dbName: utils.getMongoDatabaseName()}, () => {

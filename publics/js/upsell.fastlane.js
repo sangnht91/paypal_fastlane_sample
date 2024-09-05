@@ -120,7 +120,7 @@ const CheckoutFastLane = async () => {
       .call(FastlaneElements.arrElmFastlaneSB)
       .forEach(async (item, index) => {
         // disabled upsell submit button
-        item.setAttribute("disabled", true)
+        item.removeAttribute("disabled")
 
         const elementWatermark = `
         <div class="fastlane-shipping-address-${index}" style="display: none !important; margin-top: 10px; width: 100%; display: flex; justify-content: space-between;">

@@ -291,7 +291,7 @@ PPCP_Api.get('/relatedorders/:orderNumber', async (request: Request, response: R
       .then((rs: any) => {
         response.status(200).json({
           ...rs.main,
-          relatedorder: [...rs.upsells]
+          relatedorder: rs.upsells
         })
       })
       .catch(e => {

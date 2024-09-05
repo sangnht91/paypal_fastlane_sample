@@ -325,7 +325,6 @@ PPCP_Api.get('/:orderNumber/relatedorders', async (request: Request, response: R
         message: null
       })
     }
-
     // const mainOrder = await Transaction.Get(orderNumber)
     // const upsells = await Transaction.GetRefTransaction(orderNumber)
 

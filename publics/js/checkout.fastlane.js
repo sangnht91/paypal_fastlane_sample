@@ -282,8 +282,8 @@ const CheckoutFastLane = async () => {
           // handle next step
           localStorage.setItem("payment-method", "fastlane")
           if (rs.data.status.toString() === 'COMPLETED') {
-            localStorage.setItem("refId", rs.data.orderInfo.orderNumber)
-            const { orderInfo } = rs.data
+            const { orderInfo } = rs
+            localStorage.setItem("refId", rs.orderInfo.orderNumber)
             const __orderInfo = {
               "orderParams": "",
               "upsells": [

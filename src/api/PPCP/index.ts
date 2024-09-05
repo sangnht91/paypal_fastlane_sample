@@ -164,7 +164,7 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
     languageCode: 'EN',
     currencyCode: 'USD',
     currencySign: 'US$',
-    orderPrice: `${price}`,
+    orderPrice: price,
     orderPriceFormatted: `$${price}`,
     orderPriceUSD: `${price}`,
     orderPriceFormattedUSD: `${price}`,

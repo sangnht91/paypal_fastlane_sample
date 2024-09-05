@@ -1,4 +1,4 @@
-import { array, date, InferType, object, string } from 'yup'
+import { array, date, InferType, number, object, string } from 'yup'
 
 const Yup_Transaction = object({
   _id: string(),
@@ -8,7 +8,7 @@ const Yup_Transaction = object({
   languageCode: string(),
   currencyCode: string(),
   currencySign: string(),
-  orderPrice: string(),
+  orderPrice: number(),
   orderPriceFormatted: string(),
   orderPriceUSD: string(),
   orderPriceFormattedUSD: string(),

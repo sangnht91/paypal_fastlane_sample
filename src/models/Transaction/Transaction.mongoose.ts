@@ -31,7 +31,7 @@ const TransactionsSchema = new Schema(
       type: String
     },
     orderPrice: {
-      type: String
+      type: Number
     },
     orderPriceFormatted: {
       type: String

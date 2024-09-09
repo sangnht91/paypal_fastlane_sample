@@ -131,7 +131,7 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
           },
           "phone_number": {
             "country_code": shippingAddress?.phoneNumber?.countryCode,
-            "national_number": shippingAddress?.phoneNumber?.nationalNumber.replace("-", "")
+            "national_number": shippingAddress?.phoneNumber?.nationalNumber.replace(/-/g, "").replace(/()/g, "")
           }
         }
       }

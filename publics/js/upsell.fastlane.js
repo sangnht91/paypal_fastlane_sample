@@ -123,11 +123,11 @@ const CheckoutFastLane = async () => {
         item.setAttribute("disabled", true)
 
         const elementWatermark = `
-        <div class="fastlane-shipping-address-${index}" style="display: none !important; max-width: 450px; margin-top: 10px; width: 100%; display: flex; justify-content: space-between;">
+        <div class="fastlane-shipping-address-${index}" style="display: none !important; margin-bottom: 10px; width: 100%; display: flex; justify-content: space-between;">
           <div class="summary"></div>
           <button class="fastlane-edit-shipping-address-${index}" style="background: transparent; border: 0;">Edit</button>
         </div>
-        <div class="fastlane-payment-info-${index}" style="width: 100%; max-width: 450px; margin-top: 10px"></div>`
+        <div class="fastlane-payment-info-${index}" style="width: 100%; margin-bottom: 10px"></div>`
         item.insertAdjacentHTML("beforebegin", elementWatermark)
 
         const waterMark = await FastlaneWatermarkComponent()

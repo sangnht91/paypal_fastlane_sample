@@ -24,7 +24,7 @@ PPCP_Api.get('/client-token', async (request: Request, response: Response) => {
     URL_ENCODE.append("grant_type", "client_credentials");
     URL_ENCODE.append("response_type", "client_token");
     URL_ENCODE.append("intent", "sdk_init");
-    // URL_ENCODE.append("domains[]", "example.com,example2.com");
+    URL_ENCODE.append("domains[]", "storage.googleapis.com");
 
     const result: {
       data: any,
@@ -107,7 +107,12 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
     "intent": "CAPTURE",
     "payment_source": {
       "card": {
-        "single_use_token": paymentToken.id
+        "single_use_token": paymentToken.id,
+        "attributes": {
+          "vault": {
+              "store_in_vault": "ON_SUCCESS"
+          }
+        }
       }
     },
     "purchase_units": [
@@ -140,7 +145,11 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
 
   // save log
   const rsCreate = await Fastlane.Create({
-    fastlaneData: req.body,
+    fastlaneData: {
+      headers,
+      reqBody: req.body,
+      payload
+    },
     refId: refId || null,
     apiData: {
       requestData: {
@@ -239,7 +248,198 @@ PPCP_Api.post('/create-order', getAccessToken, async (req: Request, res: Respons
   
   // save log
   const resFastlane = rsCreate._id && await Fastlane.Update(rsCreate._id, {
-    fastlaneData: req.body,
+    fastlaneData: {
+      headers,
+      reqBody: req.body,
+      payload
+    },
+    refId: refId || null,
+    apiData: {
+      requestData: {
+        url,
+        headers,
+        payload
+      },
+      responseData: result.data
+    },
+    siteData: {}
+  })
+
+  if (resFastlane && resTransaction) {
+    res.status(result.status).json({
+      success: true,
+      data: result.data,
+      orderInfo: resTransaction,
+      message: null
+    })
+  } else {
+    res.status(500).json({
+      success: false,
+      data: null,
+      message: null
+    })
+  }
+})
+
+PPCP_Api.post('/orders', getAccessToken, async (req: Request, res: Response) => {
+  const { paymentToken, price, shippingAddress, checkout, refId, email } = req.body;
+
+  const url = 'https://api-m.sandbox.paypal.com/v2/checkout/orders'
+  const headers = {
+    ...req.headers,
+    "Content-Type": "application/json",
+    "PayPal-Request-Id": Date.now().toString()
+  }
+  const payload = {
+    "intent": "CAPTURE",
+    "payment_source": {
+      "card": {
+        "single_use_token": paymentToken.id,
+        "attributes": {
+          "vault": {
+              "store_in_vault": "ON_SUCCESS"
+          }
+        }
+      }
+    },
+    "purchase_units": [
+      {
+        "reference_id": `ABC-${Date.now().toString()}`,
+        "amount": {
+          "currency_code": "USD",
+          "value": price
+        },
+        "shipping": {
+          "type": "SHIPPING",
+          "name": {
+            "full_name": shippingAddress?.name?.fullName
+          },
+          "address": {
+            "address_line_1": shippingAddress?.address?.addressLine1,
+            "admin_area_2": shippingAddress?.address?.adminArea2,
+            "admin_area_1": shippingAddress?.address?.adminArea1,
+            "postal_code": shippingAddress?.address?.postalCode,
+            "country_code": shippingAddress?.address?.countryCode
+          },
+          "phone_number": {
+            "country_code": shippingAddress?.phoneNumber?.countryCode,
+            "national_number": shippingAddress?.phoneNumber?.nationalNumber.replace(/-/g, "").replace(/()/g, "")
+          }
+        }
+      }
+    ]
+  }
+
+  // save log
+  const rsCreate = await Fastlane.Create({
+    fastlaneData: {
+      headers,
+      reqBody: req.body,
+      payload
+    },
+    refId: refId || null,
+    apiData: {
+      requestData: {
+        url,
+        headers,
+        payload
+      },
+      responseData: {}
+    },
+    siteData: {}
+  })
+
+  const result = await axios.post(url, payload, { headers });
+  const orderNumber = Date.now().toString()
+
+  // defined transaction
+  const transaction: ITransaction = {
+    refOrderNumber: checkout ? '' : refId,
+    orderNumber: `${orderNumber}`,
+    orderStatus: 'Paid',
+    languageCode: 'EN',
+    currencyCode: 'USD',
+    currencySign: 'US$',
+    orderPrice: price,
+    orderPriceFormatted: `$${price.toFixed(2)}`,
+    orderPriceUSD: `${price.toFixed(2)}`,
+    orderPriceFormattedUSD: `${price.toFixed(2)}`,
+    orderProductPrice: `${price.toFixed(2)}`,
+    orderProductPriceFormatted: `${price.toFixed(2)}`,
+    orderProductPriceUSD: `${price.toFixed(2)}`,
+    orderProductPriceFormattedUSD: `${price.toFixed(2)}`,
+    shippingPrice: '0',
+    shippingPriceFormatted: '$0.00',
+    shippingPriceUSD: '0.00',
+    shippingPriceFormattedUSD: '$0.00',
+    ip: '193.19.109.60',
+    productName: 'Dr Goodrow Mini Home Garden',
+    productDescription: '',
+    orderType: 'Regular Order',
+    campaignName: 'Dr Goodrow Mini EN UP (GetMhamo 49 UP)',
+    sku: '30615_3',
+    customerEmail: email,
+    firstName: shippingAddress?.name?.firstName,
+    middleName: '',
+    lastName: shippingAddress?.name?.lastName,
+    addressId: '10974605',
+    orderBehaviorId: '2',
+    orderBehaviorName: 'Test Order',
+    shippingAddress: {
+      firstName: shippingAddress?.name?.firstName,
+      middleName: '',
+      lastName: shippingAddress?.name?.lastName,
+      address1: shippingAddress?.address?.addressLine1,
+      address2: shippingAddress?.address?.addressLine2,
+      city: shippingAddress?.address?.adminArea2,
+      state: shippingAddress?.address?.adminArea1,
+      countryCode: shippingAddress?.address?.countryCode,
+      countryName: 'United States of America',
+      zipCode: shippingAddress?.address?.postalCode,
+      phoneNumber: shippingAddress?.phoneNumber?.nationalNumber.replace('-', ''),
+      isVerified: '',
+      suggestion: ''
+    },
+    billingAddress: {
+      firstName: shippingAddress?.name?.firstName,
+      middleName: '',
+      lastName: shippingAddress?.name?.lastName,
+      address1: shippingAddress?.address?.addressLine1,
+      address2: shippingAddress?.address?.addressLine2,
+      city: shippingAddress?.address?.adminArea2,
+      state: shippingAddress?.address?.adminArea1,
+      countryCode: shippingAddress?.address?.countryCode,
+      countryName: 'United States of America',
+      zipCode: shippingAddress?.address?.postalCode,
+      phoneNumber: shippingAddress?.phoneNumber?.nationalNumber.replace('-', ''),
+      isVerified: '',
+      suggestion: ''
+    },
+    receipts: [
+      {
+        transactionId: 'D2030B14-3EF7-4D0B-928C-6B697DAAF70E',
+        paymentStatus: 'Paid',
+        paymentDescription: 'Product',
+        paymentNumber: '2421144891',
+        currencyCode: 'USD',
+        amount: `${price}`,
+        formattedAmount: `$${price}`,
+        midDescriptor: 'TestDescriptor'
+      }
+    ],
+    orderTaxes: '',
+    productImageUrls: '',
+    relatedOrders: []
+  }
+  const resTransaction = await Transactions.Create(transaction)
+  
+  // save log
+  const resFastlane = rsCreate._id && await Fastlane.Update(rsCreate._id, {
+    fastlaneData: {
+      headers,
+      reqBody: req.body,
+      payload
+    },
     refId: refId || null,
     apiData: {
       requestData: {

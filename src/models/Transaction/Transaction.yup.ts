@@ -2,6 +2,7 @@ import { array, date, InferType, number, object, string } from 'yup'
 
 const Yup_Transaction = object({
   _id: string(),
+  paymentToken: string(),
   refOrderNumber: string(),
   orderNumber: string(),
   orderStatus: string(),

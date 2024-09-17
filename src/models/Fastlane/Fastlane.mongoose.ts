@@ -21,6 +21,9 @@ const FastlaneSchema = new Schema({
   },
   siteData: {
     type: Object
+  },
+  PAYPAL: {
+    type: Object
   }
 }, 
   { timestamps: true }

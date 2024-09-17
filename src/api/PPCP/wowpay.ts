@@ -5,8 +5,11 @@ import axios from "axios"
 import { getAccessToken } from "../../common/utils/paypal_helpers"
 import Transactions from "../../models/Transaction/Transaction.mongoose"
 import Fastlane from "../../models/Fastlane/Fastlane.mongoose"
+import { ITransaction } from "../../models/Transaction/Transaction.yup"
 
 const wowpayApi = express.Router()
+wowpayApi.use(bodyParser.json())
+wowpayApi.use(bodyParser.urlencoded({ extended: true }))
 
 wowpayApi.get("/campaigns/:webkey/:paymentProcessor/mid", async(request: Request, response: Response) => {
   try {
@@ -32,7 +35,7 @@ wowpayApi.get("/campaigns/:webkey/:paymentProcessor/mid", async(request: Request
     if (result.status === 200) {
       response.status(result.status).json({
         clientId: utils.getPaypalClientID(),
-        accessToken: result.data.access_token
+        clientToken: result.data.access_token
       })
     } else {
       response.status(400).json(result.message)
@@ -58,7 +61,6 @@ wowpayApi.post("/orders/:webkey", getAccessToken, async (request: Request, respo
     billingAddress,
     funnelBoxId
   } = request.body
-
   const TRANSATIONID = Date.now().toString()
 
   const PAYPAL__URL = `https://api-m.sandbox.paypal.com/v2/checkout/orders`
@@ -111,17 +113,20 @@ wowpayApi.post("/orders/:webkey", getAccessToken, async (request: Request, respo
   // Save log Paypal information
   const rsCreate = await Fastlane.Create({
     PAYPAL: {
-      url: PAYPAL__URL,
-      headers: PAYPAL__HEADERS,
-      payload: PAYPAL__PAYLOAD
-    },
-    WOWPAY: {}
+      payload: {
+        url: PAYPAL__URL,
+        headers: PAYPAL__HEADERS,
+        payload: PAYPAL__PAYLOAD
+      },
+      response: {}
+    }
   })
 
   const result = await axios.post(PAYPAL__URL, PAYPAL__PAYLOAD, { headers: PAYPAL__HEADERS })
 
-  // Defined Transaction
+  // Defined and Create Transaction
   const transaction: ITransaction = {
+    paymentToken: result?.data.payment_source?.card?.attributes?.vault?.id,
     refOrderNumber: campaignUpsell ? '' : campaignUpsell.relatedOrderNumber,
     orderNumber: `${TRANSATIONID}`,
     orderStatus: 'Paid',
@@ -200,6 +205,33 @@ wowpayApi.post("/orders/:webkey", getAccessToken, async (request: Request, respo
     relatedOrders: []
   }
   const resTransaction = await Transactions.Create(transaction)
+
+  // Update log Paypal information
+  const rsUpdate = rsCreate._id && await Fastlane.Update(rsCreate._id, {
+    PAYPAL: {
+      payload: {
+        url: PAYPAL__URL,
+        headers: PAYPAL__HEADERS,
+        payload: PAYPAL__PAYLOAD
+      },
+      response: result
+    }
+  })
+
+  if (rsUpdate && resTransaction) {
+    response.status(result.status).json({
+      success: true,
+      data: result.data,
+      orderInfo: resTransaction,
+      message: null
+    })
+  } else {
+    response.status(500).json({
+      success: false,
+      data: null,
+      message: null
+    })
+  }
 })
 
 wowpayApi.get("/orders/:orderNumber/relatedorders", (request: Request, response: Response) => {

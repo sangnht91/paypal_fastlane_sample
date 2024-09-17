@@ -2,10 +2,11 @@ import { date, InferType, object, string } from "yup"
 
 const Yup_Fastlane = object({
   _id: string(),
-  fastlaneData: object(),
-  refId: string(),
-  apiData: object(),
-  siteData: object(),
+  PAYPAL: object().optional(),
+  fastlaneData: object().optional(),
+  refId: string().optional(),
+  apiData: object().optional(),
+  siteData: object().optional(),
   cratedAt: date(),
   updatedAt: date()
 })

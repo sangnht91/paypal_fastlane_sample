@@ -19,9 +19,9 @@ const PaypalSdk = {
     return URL_SDK.toString()
   },
   getMid: async() => {
-    const URL = `${link.getParams("isTest") === '1' ? 'http://localhost:3000' : 'https://paypal-fastlane-sample.onrender.com'}/api/v1/campaign/webkey/1000/mid`
+    const URL = `${link.getParams("isTest") === '1' ? 'http://localhost:3000' : 'https://paypal-fastlane-sample.onrender.com'}/api/campaigns/webkey/1000/mid`
     const result = await fetch(URL).then(res => res.json())
-    return result.data || ''
+    return result || ''
   },
   initPaypalSdk: async() => {
     console.log("========= init paypal sdk")
@@ -254,7 +254,7 @@ const CheckoutFastLane = async () => {
         paymentComponent.setShippingAddress(_shippingAddress)
       }
 
-      const URL = `${link.getParams("isTest") === '1' ? 'http://localhost:3000' : 'https://paypal-fastlane-sample.onrender.com'}/api/v1/ppcp/create-order`
+      const URL = `${link.getParams("isTest") === '1' ? 'http://localhost:3000' : 'https://paypal-fastlane-sample.onrender.com'}/api/orders/webkey`
       const headers = new Headers()
       headers.append("Content-Type", "application/json")
       _paymentToken = await paymentComponent.getPaymentToken();
@@ -305,9 +305,8 @@ const CheckoutFastLane = async () => {
         .then(result => result.json())
         .then(rs => {
           localStorage.setItem("payment-method", "fastlane")
+          const { orderInfo } = rs
           if (rs.data.status.toString() === 'COMPLETED') {
-            const { orderInfo } = rs
-            // localStorage.setItem("refId", rs.orderInfo.orderNumber)
             const __orderInfo = {
               "orderParams": "",
               "upsells": [
@@ -373,9 +372,9 @@ const CheckoutFastLane = async () => {
             localStorage.setItem("orderInfo", JSON.stringify(__orderInfo))
             localStorage.setItem("user_firstname", orderInfo.firstName)
             localStorage.setItem("user_lastname", orderInfo.lastName)
-            window.location = "upsell-1-multi-bank.html"
+            ctrwowUtils.link.redirectPage("upsell-1-multi-bank.html")
           } else {
-            window.location = "decline.html"
+            ctrwowUtils.link.redirectPage("decline.html")
           }
         })
         .catch(err => console.log(err))

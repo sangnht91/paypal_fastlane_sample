@@ -63,6 +63,13 @@ wowpayApi.post("/orders/:webkey", getAccessToken, async (request: Request, respo
   } = request.body
   const TRANSATIONID = Date.now().toString()
 
+  // get shipping address from main order
+  let _shippingAddress = null
+  if (campaignUpsell && !shippingAddress) {
+    const mainOrder: any = await Transactions.Get(campaignUpsell.relatedOrderNumber)
+    _shippingAddress = mainOrder?.main?.shippingAddress
+  }
+
   const PAYPAL__URL = `https://api-m.sandbox.paypal.com/v2/checkout/orders`
   const PAYPAL__HEADERS = {
     ...request.headers,
@@ -73,10 +80,10 @@ wowpayApi.post("/orders/:webkey", getAccessToken, async (request: Request, respo
     "intent": "CAPTURE",
     "payment_source": {
       "card": {
-        "single_use_token": payment.paymentToken,
+        "single_use_token": campaignUpsell ? payment.paymentToken : payment.paymentToken.id,
         "attributes": {
           "vault": {
-              "store_in_vault": "ON_SUCCESS"
+              "store_in_vault": !campaignUpsell ? "ON_SUCCESS" : ""
           }
         }
       }
@@ -91,19 +98,19 @@ wowpayApi.post("/orders/:webkey", getAccessToken, async (request: Request, respo
         "shipping": {
           "type": "SHIPPING",
           "name": {
-            "full_name": `${customer.firstName} ${customer.lastName}`
+            "full_name": `${campaignUpsell ? _shippingAddress?.firstName : shippingAddress.firstName} ${campaignUpsell ? _shippingAddress?.lastName : shippingAddress.lastName}`
           },
           "address": {
-            "address_line_1": shippingAddress.address1,
-            "address_line_2": shippingAddress.address2,
-            "admin_area_1": shippingAddress.state,
-            "admin_area_2": shippingAddress.city,
-            "postal_code": shippingAddress.zipCode,
-            "country_code": shippingAddress.countryCode
+            "address_line_1": campaignUpsell ? _shippingAddress?.address1 : shippingAddress.address1,
+            "address_line_2": campaignUpsell ? _shippingAddress?.address2 : shippingAddress.address2,
+            "admin_area_1": campaignUpsell ? _shippingAddress?.state : shippingAddress.state,
+            "admin_area_2": campaignUpsell ? _shippingAddress?.city : shippingAddress.city,
+            "postal_code": campaignUpsell ? _shippingAddress?.zipCode : shippingAddress.zipCode,
+            "country_code": campaignUpsell ? _shippingAddress?.countryCode : shippingAddress.countryCode
           },
           "phone_number": {
             "country_code": "1",
-            "national_number": shippingAddress.phoneNumber.replace(/-/g, "").replace(/()/g, "")
+            "national_number": campaignUpsell ? _shippingAddress?.phoneNumber : shippingAddress.phoneNumber.replace(/-/g, "").replace(/()/g, "")
           }
         }
       }
@@ -126,8 +133,8 @@ wowpayApi.post("/orders/:webkey", getAccessToken, async (request: Request, respo
 
   // Defined and Create Transaction
   const transaction: ITransaction = {
-    paymentToken: result?.data.payment_source?.card?.attributes?.vault?.id,
-    refOrderNumber: campaignUpsell ? '' : campaignUpsell.relatedOrderNumber,
+    paymentToken: result?.data.payment_source?.card?.attributes?.vault?.id || "",
+    refOrderNumber: !campaignUpsell ? '' : campaignUpsell.relatedOrderNumber,
     orderNumber: `${TRANSATIONID}`,
     orderStatus: 'Paid',
     languageCode: 'EN',
@@ -152,39 +159,39 @@ wowpayApi.post("/orders/:webkey", getAccessToken, async (request: Request, respo
     campaignName: 'campaignName',
     sku: 'SKU',
     customerEmail: customer.email,
-    firstName: shippingAddress?.name?.firstName,
+    firstName: customer.firstName,
     middleName: '',
-    lastName: shippingAddress?.name?.lastName,
+    lastName: customer.lastName,
     addressId: '123456',
     orderBehaviorId: '2',
     orderBehaviorName: 'Test Order',
     shippingAddress: {
-      firstName: shippingAddress.firstName,
+      firstName: campaignUpsell ? _shippingAddress?.firstName : shippingAddress.firstName,
       middleName: '',
-      lastName: shippingAddress.lastName,
-      address1: shippingAddress.address1,
-      address2: shippingAddress.address2,
-      city: shippingAddress.city,
-      state: shippingAddress.state,
-      countryCode: shippingAddress.countryCode,
+      lastName: campaignUpsell ? _shippingAddress?.lastName : shippingAddress.lastName,
+      address1: campaignUpsell ? _shippingAddress?.address1 : shippingAddress.address1,
+      address2: campaignUpsell ? _shippingAddress?.address2 : shippingAddress.address2,
+      city: campaignUpsell ? _shippingAddress?.city : shippingAddress.city,
+      state: campaignUpsell ? _shippingAddress?.state : shippingAddress.state,
+      countryCode: campaignUpsell ? _shippingAddress?.countryCode : shippingAddress.countryCode,
       countryName: 'United States of America',
-      zipCode: shippingAddress.zipCode,
-      phoneNumber: shippingAddress.phoneNumber.replace(/-/g, "").replace(/()/g, ""),
+      zipCode: campaignUpsell ? _shippingAddress?.zipCode : shippingAddress.zipCode,
+      phoneNumber: campaignUpsell ? _shippingAddress?.phoneNumber : shippingAddress.phoneNumber.replace(/-/g, "").replace(/()/g, ""),
       isVerified: '',
       suggestion: ''
     },
     billingAddress: {
-      firstName: shippingAddress?.name?.firstName,
+      firstName: campaignUpsell ? _shippingAddress?.firstName : shippingAddress.firstName,
       middleName: '',
-      lastName: shippingAddress?.name?.lastName,
-      address1: shippingAddress?.address?.addressLine1,
-      address2: shippingAddress?.address?.addressLine2,
-      city: shippingAddress?.address?.adminArea2,
-      state: shippingAddress?.address?.adminArea1,
-      countryCode: shippingAddress?.address?.countryCode,
+      lastName: campaignUpsell ? _shippingAddress?.lastName : shippingAddress.lastName,
+      address1: campaignUpsell ? _shippingAddress?.address1 : shippingAddress.address1,
+      address2: campaignUpsell ? _shippingAddress?.address2 : shippingAddress.address2,
+      city: campaignUpsell ? _shippingAddress?.city : shippingAddress.city,
+      state: campaignUpsell ? _shippingAddress?.state : shippingAddress.state,
+      countryCode: campaignUpsell ? _shippingAddress?.countryCode : shippingAddress.countryCode,
       countryName: 'United States of America',
-      zipCode: shippingAddress?.address?.postalCode,
-      phoneNumber: shippingAddress?.phoneNumber?.nationalNumber.replace('-', ''),
+      zipCode: campaignUpsell ? _shippingAddress?.zipCode : shippingAddress.zipCode,
+      phoneNumber: campaignUpsell ? _shippingAddress?.phoneNumber : shippingAddress.phoneNumber.replace(/-/g, "").replace(/()/g, ""),
       isVerified: '',
       suggestion: ''
     },
@@ -214,7 +221,7 @@ wowpayApi.post("/orders/:webkey", getAccessToken, async (request: Request, respo
         headers: PAYPAL__HEADERS,
         payload: PAYPAL__PAYLOAD
       },
-      response: result
+      response: result.data
     }
   })
 

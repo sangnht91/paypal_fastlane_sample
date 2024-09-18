@@ -12,6 +12,9 @@ interface ITransactionModel extends Model<ITransactionDocument> {
 const Schema = mongoose.Schema
 const TransactionsSchema = new Schema(
   {
+    paymentToken: {
+      type: String
+    },
     refOrderNumber: {
       type: String
     },
